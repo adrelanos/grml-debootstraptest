@@ -1,16 +1,17 @@
 #!/bin/bash
 
 set -x
+set -e
 
 VMNAME=test
 
 mount_img() {
    sync
-   kpartx -av /home/user/debootstraptestbin/"$VMNAME".img
+   kpartx -av "/home/$SUDO_USER/debootstraptestbin/$VMNAME.img"
    sync
-   mkdir -p /home/user/debootstraptestbin/mounted
+   mkdir -p "/home/$SUDO_USER/debootstraptestbin/mounted"
    sync
-   mount /dev/mapper/loop0p1 /home/user/debootstraptestbin/mounted
+   mount "/dev/mapper/loop0p1 /home/$SUDO_USER/debootstraptestbin/mounted"
    sync
 }
 

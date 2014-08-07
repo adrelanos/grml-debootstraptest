@@ -1,12 +1,15 @@
 #!/bin/bash
 
+set -x
+set -e
+
 VMNAME=test
 
 unmount_img() {
    sync
-   umount /home/user/debootstraptestbin/
+   umount "/home/$SUDO_USER/debootstraptestbin/"
    sync
-   kpartx -d /home/user/debootstraptestbin/"$VMNAME".img
+   kpartx -d "/home/$SUDO_USER/debootstraptestbin/$VMNAME.img"
    sync
 }
 
