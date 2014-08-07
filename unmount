@@ -1,3 +1,5 @@
+#!/bin/bash
+
 VMNAME=test
 
 unmount_img() {
@@ -6,6 +8,6 @@ unmount_img() {
    sync
    kpartx -d /home/user/debootstraptestbin/"$VMNAME".img
    sync
-} 
+}
 
 unmount_img
