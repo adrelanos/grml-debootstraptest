@@ -7,14 +7,14 @@ VMSIZE=2G
 create_img() {
    trap "error_handler_int_whonix_image" ERR INT TERM
 
-   sudo -u $USERNAME mkdir -p /home/user/grml-debootstraptestbin
+   sudo -u $USERNAME mkdir -p "/home/user/grml-debootstraptestbin"
 
    grml-debootstrap \
       --arch i386 \
       --filesystem ext4 \
       --force \
       --hostname host \
-      --mirror http://127.0.0.1:3142/debian \
+      --mirror http://ftp.us.debian.org/debian \
       --keep_src_list \
       --password changeme \
       --release wheezy \
@@ -22,11 +22,8 @@ create_img() {
       --vmfile \
       --vmsize "$VMSIZE" \
       --config "./grml_config" \
-      --packages "./"$VMNAME"_packages" \
-      --target /home/user/grml-debootstraptestbin/"$VMNAME".img
+      --packages "./${VMNAME}_packages" \
+      --target "/home/user/grml-debootstraptestbin/$VMNAME.img"
 }
 
 create_img
-
-# results in /etc/apt/sources.list
-# deb http://127.0.0.1:3142/debian wheezy main
