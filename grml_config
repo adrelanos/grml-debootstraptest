@@ -16,7 +16,7 @@
 # If you specify a string *without* /dev/ in the beginning, grml-debootstrap
 # assumes you want to install Debian into a directory. MKFS, TUNE2FS, GRUB and
 # FSCK will be ignored.
-# Make sure the TARGET-directory points to a filesystem which has the dev, exec
+# Make sure the TARGET-directory points to a filesystem which has the dev, exec
 # options enabled.
 # Default: no default.
 # Usage examples:
@@ -37,7 +37,7 @@
 
 # Set mirror where packages will be downloaded from.
 # Default: use /etc/debootstrap/etc/apt/sources.list if it exists, else
-# 'http://cdn.debian.net/debian'
+# 'http://http.debian.net/debian'
 # Usage example:
 # MIRROR='ftp://ftp.de.debian.org/debian'
 
@@ -62,15 +62,19 @@
 # Default: no default.
 # GRMLPACKAGES='grml-etc-core'
 
+# To enable Debian's backports repository via
+# /etc/apt/sources.list.d/backports.list set this variable to 'yes'.
+# Default: 'no'
+# BACKPORTREPOS='yes'
+
 # Debian release that should be installed.
-# Supported values: lenny (old-stable), squeeze (stable),
-#                   wheezy (testing), sid (unstable)
-# Default: 'squeeze'
-# RELEASE='squeeze'
+# Supported values: lenny, squeeze, wheezy, sid
+# Default: 'wheezy'
+# RELEASE='wheezy'
 
 # Define components that should be used within sources.list.
 # Default: 'main contrib non-free'
-COMPONENTS='main contrib'
+# COMPONENTS='main contrib non-free'
 
 # Set target architecture.
 # Only useful when installing i386 while running an amd64 kernel.
@@ -78,7 +82,7 @@ COMPONENTS='main contrib'
 # ARCH='amd64'
 
 # Hostname of new system.
-# Default: 'grml'
+# Default: $HOSTNAME or if unset 'grml'
 # HOSTNAME='grml'
 
 # Kernel version to install.
@@ -94,10 +98,6 @@ COMPONENTS='main contrib'
 # Supported values: 'debootstrap', 'cdebootstrap'
 # Default: 'debootstrap'
 # DEBOOTSTRAP='debootstrap'
-
-# Enable Secure APT (Package sources must be signed).
-# Default: 'yes'
-# SECURE='no'
 
 # Pass extra options to debootstrap.
 # Default: no default.
@@ -125,15 +125,15 @@ COMPONENTS='main contrib'
 # Default: 'yes' (if file exists)
 # DEBCONF='no'
 
+# Run scripts from /etc/debootstrap/pre-scripts/ before creating the chroot.
+# Default: 'yes'
+# PRE_SCRIPTS='no'
+
 # Run scripts from /etc/debootstrap/chroot-scripts/ inside chroot.
 # Default: 'yes'
 # CHROOT_SCRIPTS='no'
 
-# Run scripts from /etc/debootstrap/pre-scripts/ before creating the chroot.
-# Default: 'yes'
-# PRE_SCRIPTS='no'
-
-# Run scripts from /etc/debootstrap/pre-scripts/ after setting up chroot.
+# Run scripts from /etc/debootstrap/scripts/ after setting up chroot.
 # Default: 'yes'
 # SCRIPTS='no'
 
@@ -151,7 +151,7 @@ COMPONENTS='main contrib'
 
 # File system creation tool to apply on $TARGET.
 # If empty, no file system will be created.
-# Default: 'mkfs.ext3'
+# Default: 'mkfs.ext4'
 # MKFS=''
 
 # Filesystem tuning tool to apply on $TARGET.
@@ -175,6 +175,14 @@ FSCK='yes'
 # Default: 'yes'
 # LOCALES='no'
 
+# locales (LANG) that should be used as default.
+# Default: 'en_US.UTF-8'
+# DEFAULT_LOCALES='en_US.UTF-8'
+
+# locales (LANGUAGE) that should be used as default.
+# Default: 'en_US:en'
+# DEFAULT_LANGUAGE='en_US:en'
+
 # Use /usr/share/zoneinfo/$TIMEZONE for /etc/localtime.
 # Default: 'Europe/Vienna'
 TIMEZONE='UTC'
@@ -182,6 +190,10 @@ TIMEZONE='UTC'
 # Clean APT cache after installation is finished.
 # Default: 'yes'
 RM_APTCACHE='no'
+
+# Upgrade system via apt-get/aptitude update + [safe-]upgrade.
+# Default: 'yes'
+UPGRADE_SYSTEM='no'
 
 # Explicit generation of initrd via update-initramfs.
 # Default: 'yes'
@@ -193,5 +205,9 @@ RM_APTCACHE='no'
 # Default: '/etc/debootstrap/install_notes' (empty file).
 # INSTALL_NOTES='/etc/debootstrap/install_notes'
 
-## END OF FILE #################################################################
+# Use fixed disk identifiers for Virtual Machine builds.
+# Useful for reproducible builds.
+# Default: 'no'
+FIXED_DISK_IDENTIFIERS='yes'
 
+## END OF FILE #################################################################
