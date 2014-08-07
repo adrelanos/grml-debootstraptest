@@ -1,13 +1,14 @@
 #!/bin/bash
 
+set -x
+set -e
+
 VMNAME=test
-USERNAME=user
+USERNAME="$SUDO_USER"
 VMSIZE=2G
 
 create_img() {
-   trap "error_handler_int_whonix_image" ERR INT TERM
-
-   sudo -u $USERNAME mkdir -p "/home/user/grml-debootstraptestbin"
+   sudo -u $USERNAME mkdir -p "/home/$USERNAME/grml-debootstraptestbin"
 
    grml-debootstrap \
       --arch i386 \
@@ -23,7 +24,7 @@ create_img() {
       --vmsize "$VMSIZE" \
       --config "./grml_config" \
       --packages "./${VMNAME}_packages" \
-      --target "/home/user/grml-debootstraptestbin/$VMNAME.img"
+      --target "/home/$USERNAME/grml-debootstraptestbin/$VMNAME.img"
 }
 
 create_img
