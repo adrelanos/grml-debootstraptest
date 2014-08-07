@@ -4,11 +4,10 @@ set -x
 set -e
 
 VMNAME=test
-USERNAME="$SUDO_USER"
 VMSIZE=2G
 
 create_img() {
-   sudo -u $USERNAME mkdir -p "/home/$USERNAME/grml-debootstraptestbin"
+   sudo -u "$SUDO_USER" mkdir -p "/home/$SUDO_USER/grml-debootstraptestbin"
 
    grml-debootstrap \
       --arch i386 \
@@ -24,7 +23,7 @@ create_img() {
       --vmsize "$VMSIZE" \
       --config "./grml_config" \
       --packages "./${VMNAME}_packages" \
-      --target "/home/$USERNAME/grml-debootstraptestbin/$VMNAME.img"
+      --target "/home/$SUDO_USER/grml-debootstraptestbin/$VMNAME.img"
 }
 
 create_img
