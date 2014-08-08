@@ -9,22 +9,25 @@ VMSIZE=2G
 create_img() {
    sudo -u "$SUDO_USER" mkdir -p "/home/$SUDO_USER/grml-debootstraptestbin"
 
-   grml-debootstrap \
-      --keep_src_list \
-      --arch i386 \
-      --filesystem ext4 \
-      --force \
-      --hostname host \
-      --mirror http://ftp.us.debian.org/debian \
-      --keep_src_list \
-      --password changeme \
-      --release jessie \
-      --verbose \
-      --vmfile \
-      --vmsize "$VMSIZE" \
-      --config "./grml_config" \
-      --packages "./${VMNAME}_packages" \
-      --target "/home/$SUDO_USER/grml-debootstraptestbin/$VMNAME.img"
+   export DEBUG="true"
+
+   bash -x \
+      grml-debootstrap \
+         --keep_src_list \
+         --arch i386 \
+         --filesystem ext4 \
+         --force \
+         --hostname host \
+         --mirror http://ftp.us.debian.org/debian \
+         --keep_src_list \
+         --password changeme \
+         --release jessie \
+         --verbose \
+         --vmfile \
+         --vmsize "$VMSIZE" \
+         --config "./grml_config" \
+         --packages "./${VMNAME}_packages" \
+         --target "/home/$SUDO_USER/grml-debootstraptestbin/$VMNAME.img"
 }
 
 create_img
