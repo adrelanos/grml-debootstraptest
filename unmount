@@ -3,7 +3,7 @@
 set -x
 set -e
 
-VMNAME=test
+VMNAME="test"
 
 unmount_img() {
    sync

@@ -10,6 +10,7 @@ create_img() {
    sudo -u "$SUDO_USER" mkdir -p "/home/$SUDO_USER/grml-debootstraptestbin"
 
    grml-debootstrap \
+      --keep_src_list \
       --arch i386 \
       --filesystem ext4 \
       --force \
