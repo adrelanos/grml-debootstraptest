@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -x
+set -e
+
+VMNAME="test"
+
+convert_raw-to_vdi() {
+   sudo -u "$SUDO_USER" \
+      mkdir --parents "/home/$SUDO_USER/VirtualBox VMs/$VMNAME"
+
+   sudo -u "$SUDO_USER" \
+      VBoxManage convertfromraw "/home/$SUDO_USER/grml-debootstraptestbin/$VMNAME.img" "/home/$SUDO_USER/VirtualBox VMs/$VMNAME/$VMNAME.vdi"
+}
+
+convert_raw-to_vdi
