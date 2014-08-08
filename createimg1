@@ -13,7 +13,6 @@ create_img() {
 
    bash -x \
       grml-debootstrap \
-         --keep_src_list \
          --arch i386 \
          --filesystem ext4 \
          --force \
