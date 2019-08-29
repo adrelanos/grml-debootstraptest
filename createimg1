@@ -15,7 +15,7 @@ create_img() {
 
    bash -x \
       grml-debootstrap \
-         --arch i386 \
+         --arch amd64 \
          --filesystem ext4 \
          --force \
          --hostname host \
