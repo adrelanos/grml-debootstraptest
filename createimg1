@@ -11,6 +11,8 @@ create_img() {
 
    export DEBUG="true"
 
+   export KERNEL="linux-image-amd64"
+
    bash -x \
       grml-debootstrap \
          --arch i386 \
