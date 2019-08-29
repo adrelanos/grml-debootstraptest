@@ -22,7 +22,7 @@ create_img() {
          --mirror http://ftp.us.debian.org/debian \
          --keep_src_list \
          --password changeme \
-         --release jessie \
+         --release buster \
          --verbose \
          --vmfile \
          --vmsize "$VMSIZE" \
