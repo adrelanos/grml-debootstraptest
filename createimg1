@@ -1,9 +1,10 @@
 #!/bin/bash
 
+## Must be run with root (sudo)!
+
 set -x
 set -e
 
-VMNAME=test
 VMSIZE=2G
 
 create_img() {
@@ -11,24 +12,27 @@ create_img() {
 
    export DEBUG="true"
 
-   export KERNEL="linux-image-amd64"
+   #export KERNEL="linux-image-amd64"
+
+   export DEBOOTSTRAP=mmdebstrap
+   export http_proxy=http://127.0.0.1:3142
 
    bash -x \
       grml-debootstrap \
-         --arch amd64 \
+         --arch arm64 \
          --filesystem ext4 \
          --force \
          --hostname host \
-         --mirror http://ftp.us.debian.org/debian \
+         --mirror http://HTTPS///deb.debian.org/debian \
          --keep_src_list \
          --password changeme \
-         --release buster \
+         --release bookworm \
          --verbose \
          --vmfile \
          --vmsize "$VMSIZE" \
-         --config "./grml_config" \
-         --packages "./${VMNAME}_packages" \
-         --target "/home/$SUDO_USER/grml-debootstraptestbin/$VMNAME.img"
+         --target "/home/$SUDO_USER/grml-debootstraptestbin/test.img"
+
+   chown --recursive user:user /home/$SUDO_USER/grml-debootstraptestbin
 }
 
 create_img

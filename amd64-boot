@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -x
+set -e
+
+## We might get away with --no-install-recommends, fewer packages.
+sudo apt-get install qemu-system-arm qemu-system-aarch64 qemu-efi-aarch64 qemu-utils
+
+## user: user
+## password: changeme
+
+qemu-system-x86_64 \
+    -m 1024 \
+    -drive format=raw,file=/home/user/grml-debootstraptestbin/test.img
