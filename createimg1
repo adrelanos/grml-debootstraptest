@@ -15,6 +15,7 @@ create_img() {
    #export KERNEL="linux-image-amd64"
 
    export DEBOOTSTRAP=mmdebstrap
+   export INITRD_GENERATOR=dracut
    export http_proxy=http://127.0.0.1:3142
 
    bash -x \
