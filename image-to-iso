@@ -64,14 +64,18 @@ KVERSION=$(cd "$MNTPOINT"/boot && find vmlinuz-* | tail -1 | sed 's@vmlinuz-@@')
 cp -a "${MNTPOINT}"/boot/vmlinuz-"${KVERSION}" "${ISO_TMP_DIR}"/live/vmlinuz
 cp -a "${MNTPOINT}"/boot/initrd.img-"${KVERSION}" "${ISO_TMP_DIR}"/live/initrd.img
 
-mksquashfs "${MNTPOINT}" "${ISO_TMP_DIR}/live"/filesystem.squashfs -noappend
+## During development when testing different kernel boot parameters it is probably
+## unnecessary to re-create the squashfs over and over again.
+## TODO: enable
+#mksquashfs "${MNTPOINT}" "${ISO_TMP_DIR}/live"/filesystem.squashfs -noappend
 
 cat << EOF > "${ISO_TMP_DIR}"/boot/grub/grub.cfg
 set default="0"
 set timeout=10
 
 menuentry "Linux" {
-    linux /live/vmlinuz boot=live root=(live)
+    linux /live/vmlinuz root=live:LABEL=live ro rd.live.ram rd.live.image rd.live.squashimg=/live/filesystem.squashfs console=ttyS0 rd.debug
+
     initrd /live/initrd.img
 }
 

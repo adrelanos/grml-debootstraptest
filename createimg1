@@ -37,6 +37,8 @@ create_img() {
    export INITRD_GENERATOR=dracut
    export http_proxy=http://127.0.0.1:3142
 
+   sudo cp --verbose ./packages-custom /etc/debootstrap/packages-custom
+
    bash -x \
       grml-debootstrap \
          --arch amd64 \
@@ -51,7 +53,7 @@ create_img() {
          --vmfile \
          --vmsize "$VMSIZE" \
          --vmefi \
-         --packages ./packages \
+         --packages packages-custom \
          --target "/home/$SUDO_USER/grml-debootstraptestbin/test.img"
 
    chown --recursive user:user /home/$SUDO_USER/grml-debootstraptestbin
