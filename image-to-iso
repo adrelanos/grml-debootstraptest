@@ -71,7 +71,7 @@ cp -a "${MNTPOINT}"/boot/initrd.img-"${KVERSION}" "${ISO_TMP_DIR}"/LiveOS/initrd
 mksquashfs "${MNTPOINT}" "${ISO_TMP_DIR}/LiveOS"/squashfs.img -noappend
 
 ## Fedora 39 example:
-## linux /images/pxeboot/vmlinuz root=LiveOS:CDLABEL=Fedora-WS-Live-39-1-5  rd.LiveOS.image quiet rhgb
+## linux /images/pxeboot/vmlinuz root=live:CDLABEL=Fedora-WS-Live-39-1-5  rd.live.image quiet rhgb
 
 cat << EOF > "${ISO_TMP_DIR}"/boot/grub/grub.cfg
 set default="0"
