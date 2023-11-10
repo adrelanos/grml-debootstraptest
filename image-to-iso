@@ -80,7 +80,6 @@ set timeout=10
 
 menuentry "Linux" {
     linux /LiveOS/vmlinuz root=live:CDLABEL=test rd.live.image rd.debug rd.live.debug console=ttyS0
-
     initrd /LiveOS/initrd.img
 }
 
@@ -94,7 +93,8 @@ EOF
 
 true "Creating ISO..."
 
-grub-mkrescue -o "$ISO_IMAGE_FILE" "$ISO_TMP_DIR"
+## '-V test' set label to 'test'. This must match the 'root=live:CDLABEL=test' kernel command line.
+grub-mkrescue -V test -o "$ISO_IMAGE_FILE" "$ISO_TMP_DIR"
 
 true "Unmounting..."
 
