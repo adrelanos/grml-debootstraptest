@@ -37,6 +37,7 @@ create_img() {
          --verbose \
          --vmfile \
          --vmsize "$VMSIZE" \
+         --vmefi \
          --packages ./packages \
          --target "/home/$SUDO_USER/grml-debootstraptestbin/test.img"
 
