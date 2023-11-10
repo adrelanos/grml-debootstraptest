@@ -1,14 +1,17 @@
 #!/bin/bash
 
-## Must be run with root (sudo)!
-
 set -x
 set -e
 
-VMSIZE=2G
+if [ ! "$(id -u)" = "0" ]; then
+   echo "ERROR: Must be run with root (sudo)! sudo $0" >&2
+   exit 1
+fi
 
 create_img() {
    sudo -u "$SUDO_USER" mkdir -p "/home/$SUDO_USER/grml-debootstraptestbin"
+
+   VMSIZE=2G
 
    export DEBUG="true"
 
