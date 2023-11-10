@@ -68,8 +68,7 @@ cp -a "${MNTPOINT}"/boot/initrd.img-"${KVERSION}" "${ISO_TMP_DIR}"/LiveOS/initrd
 
 ## During development when testing different kernel boot parameters it is probably
 ## unnecessary to re-create the squashfs over and over again.
-## TODO: enable
-#mksquashfs "${MNTPOINT}" "${ISO_TMP_DIR}/LiveOS"/squashfs.img -noappend
+mksquashfs "${MNTPOINT}" "${ISO_TMP_DIR}/LiveOS"/squashfs.img -noappend
 
 ## Fedora 39 example:
 ## linux /images/pxeboot/vmlinuz root=LiveOS:CDLABEL=Fedora-WS-Live-39-1-5  rd.LiveOS.image quiet rhgb
