@@ -37,6 +37,7 @@ create_img() {
          --verbose \
          --vmfile \
          --vmsize "$VMSIZE" \
+         --packages ./packages \
          --target "/home/$SUDO_USER/grml-debootstraptestbin/test.img"
 
    chown --recursive user:user /home/$SUDO_USER/grml-debootstraptestbin
