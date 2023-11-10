@@ -11,6 +11,10 @@ if [ ! "$(id -u)" = "0" ]; then
    exit 1
 fi
 
+command -v mksquashfs >/dev/null
+command -v grub-mkrescue >/dev/null
+command -v xorriso >/dev/null
+
 IMAGE_FILE="/home/$SUDO_USER/grml-debootstraptestbin/test.img"
 ISO_TMP_DIR="/home/$SUDO_USER/grml-debootstraptestbin/iso_tmp"
 ISO_IMAGE_FILE="/home/$SUDO_USER/grml-debootstraptestbin/output.iso"
