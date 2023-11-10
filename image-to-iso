@@ -2,6 +2,8 @@
 
 ## image is required to include the live-boot package already
 
+## TODO: port to squashfs-tools-ng
+
 set -x
 set -e
 set -o pipefail
@@ -56,27 +58,30 @@ mount "$EFI_TARGET" "${MNTPOINT}"/boot/efi
 
 true "Preparing ISO..."
 
-mkdir -p "${ISO_TMP_DIR}/live"
+mkdir -p "${ISO_TMP_DIR}/LiveOS"
 mkdir -p "${ISO_TMP_DIR}/boot/grub"
 
 KVERSION=$(cd "$MNTPOINT"/boot && find vmlinuz-* | tail -1 | sed 's@vmlinuz-@@')
 
-cp -a "${MNTPOINT}"/boot/vmlinuz-"${KVERSION}" "${ISO_TMP_DIR}"/live/vmlinuz
-cp -a "${MNTPOINT}"/boot/initrd.img-"${KVERSION}" "${ISO_TMP_DIR}"/live/initrd.img
+cp -a "${MNTPOINT}"/boot/vmlinuz-"${KVERSION}" "${ISO_TMP_DIR}"/LiveOS/vmlinuz
+cp -a "${MNTPOINT}"/boot/initrd.img-"${KVERSION}" "${ISO_TMP_DIR}"/LiveOS/initrd.img
 
 ## During development when testing different kernel boot parameters it is probably
 ## unnecessary to re-create the squashfs over and over again.
 ## TODO: enable
-mksquashfs "${MNTPOINT}" "${ISO_TMP_DIR}/live"/filesystem.squashfs -noappend
+#mksquashfs "${MNTPOINT}" "${ISO_TMP_DIR}/LiveOS"/squashfs.img -noappend
+
+## Fedora 39 example:
+## linux /images/pxeboot/vmlinuz root=LiveOS:CDLABEL=Fedora-WS-Live-39-1-5  rd.LiveOS.image quiet rhgb
 
 cat << EOF > "${ISO_TMP_DIR}"/boot/grub/grub.cfg
 set default="0"
 set timeout=10
 
 menuentry "Linux" {
-    linux /live/vmlinuz ro rd.live.image rd.live.squashimg=/live/filesystem.squashfs console=ttyS0 rd.debug rd.live.debug root=live:/live/filesystem.squashfs
+    linux /LiveOS/vmlinuz root=live:CDLABEL=test rd.live.image rd.debug rd.live.debug console=ttyS0
 
-    initrd /live/initrd.img
+    initrd /LiveOS/initrd.img
 }
 
 

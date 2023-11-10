@@ -28,11 +28,5 @@ w3m
 zsh
 
 dracut-live
-dracut-network
 parted
 dmraid
-ctorrent
-p11-kit
-curl
-modsign
-connman
