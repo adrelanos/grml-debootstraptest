@@ -1,14 +1,21 @@
 #!/bin/bash
 
+## image is required to include the live-boot package already
+
 set -x
 set -e
 set -o pipefail
 
-IMAGE_FILE=tmp.img
-ISO_TMP_DIR=iso_tmp
-ISO_IMAGE_FILE=output.iso
+if [ ! "$(id -u)" = "0" ]; then
+   true "ERROR: Must be run with root (sudo)! sudo $0" >&2
+   exit 1
+fi
 
-grml-debootstrap -t "$IMAGE_FILE" --vmfile --vmefi --vmsize 3G
+IMAGE_FILE="/home/$SUDO_USER/grml-debootstraptestbin/test.img"
+ISO_TMP_DIR="/home/$SUDO_USER/grml-debootstraptestbin/iso_tmp"
+ISO_IMAGE_FILE="/home/$SUDO_USER/grml-debootstraptestbin/output.iso"
+
+#grml-debootstrap -t "$IMAGE_FILE" --vmfile --vmefi --vmsize 3G
 
 true "Mounting..."
 DEVINFO=$(kpartx -asv "$IMAGE_FILE")
@@ -27,21 +34,21 @@ MNTPOINT=$(mktemp -d)
 mount "$TARGET" "$MNTPOINT"
 mount "$EFI_TARGET" "${MNTPOINT}"/boot/efi
 
-true "Setup live-boot in chroot..."
-
-mount -t proc none "${MNTPOINT}"/proc
-mount -t sysfs none "${MNTPOINT}"/sys
-mount -t devtmpfs udev "${MNTPOINT}"/dev
-mount -t devpts devpts "${MNTPOINT}"/dev/pts
-
-chroot "$MNTPOINT" apt-get update
-DEBIAN_FRONTEND=noninteractive chroot "$MNTPOINT" apt-get install --no-install-recommends -y live-boot
-chroot "$MNTPOINT" apt-get clean
-
-umount "${MNTPOINT}"/dev/pts
-umount "${MNTPOINT}"/dev
-umount "${MNTPOINT}"/sys
-umount "${MNTPOINT}"/proc
+# true "Setup live-boot in chroot..."
+#
+# mount -t proc none "${MNTPOINT}"/proc
+# mount -t sysfs none "${MNTPOINT}"/sys
+# mount -t devtmpfs udev "${MNTPOINT}"/dev
+# mount -t devpts devpts "${MNTPOINT}"/dev/pts
+#
+# chroot "$MNTPOINT" apt-get update
+# DEBIAN_FRONTEND=noninteractive chroot "$MNTPOINT" apt-get install --no-install-recommends -y live-boot
+# chroot "$MNTPOINT" apt-get clean
+#
+# umount "${MNTPOINT}"/dev/pts
+# umount "${MNTPOINT}"/dev
+# umount "${MNTPOINT}"/sys
+# umount "${MNTPOINT}"/proc
 
 true "Preparing ISO..."
 
