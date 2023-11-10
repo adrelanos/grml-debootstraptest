@@ -14,6 +14,12 @@ create_img() {
 
    #export KERNEL="linux-image-amd64"
 
+   export FSCK='yes'
+   export TIMEZONE='UTC'
+   export RM_APTCACHE='no'
+   export UPGRADE_SYSTEM='no'
+   export FIXED_DISK_IDENTIFIERS='yes'
+
    export DEBOOTSTRAP=mmdebstrap
    export INITRD_GENERATOR=dracut
    export http_proxy=http://127.0.0.1:3142
