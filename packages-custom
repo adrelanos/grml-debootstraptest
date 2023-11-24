@@ -1,3 +1,17 @@
+# SPDX-FileCopyrightText: Copyright: 2006-2023, Michael Prokop <mika@grml.org>
+# SPDX-FileCopyrightText: 2014, 2015, Sebastian Pipping <sebastian@pipping.org>
+# SPDX-FileCopyrightText: 2014, Patrick Schleizer <adrelanos@riseup.net>
+# SPDX-FileCopyrightText: 2013, 2014, Markus Rekkenbeil <mre@mobi4friends.de>
+# SPDX-FileCopyrightText: 2012, 2013, Evgeni Golov <evgeni@grml.org>
+# SPDX-FileCopyrightText: 2012, Darshaka Pathirana <dpat@syn-net.org>
+# SPDX-FileCopyrightText: 2010, 2011, 2013, 2014, Christian Hofstaedtler <christian@hofstaedtler.name>
+# SPDX-FileCopyrightText: 2009, 2010, 2011, Ulrich Dangel <mru@grml.org>
+# SPDX-FileCopyrightText: 2009, Michael Gebetsroither <michael@mgeb.org>
+# SPDX-FileCopyrightText: 2008, 2010, Tong Sun <suntong@cpan.org>
+# SPDX-FileCopyrightText: 2007, Alexander Wirt <formorer@grml.org>
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 acpi-support-base
 bridge-utils
 bzip2
