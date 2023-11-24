@@ -1,0 +1,10 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: grml-debootstraptest
+Upstream-Contact: Patrick Schleizer <adrelanos@kicksecure.com>
+Source: https://github.com/adrelanos/grml-debootstraptest
+
+# Sample paragraph, commented out:
+#
+# Files: src/*
+# Copyright: $YEAR $NAME <$CONTACT>
+# License: ...
