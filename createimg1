@@ -60,7 +60,7 @@ create_img() {
          --packages packages-custom \
          --target "/home/$SUDO_USER/grml-debootstraptestbin/test.img"
 
-   chown --recursive user:user /home/$SUDO_USER/grml-debootstraptestbin
+   chown --recursive $SUDO_USER:$SUDO_USER /home/$SUDO_USER/grml-debootstraptestbin
 }
 
 create_img
