@@ -82,7 +82,7 @@ set default="0"
 set timeout=10
 
 menuentry "Linux" {
-    linux /LiveOS/vmlinuz root=live:CDLABEL=test rd.live.image rd.debug rd.live.debug console=ttyS0
+    linux /LiveOS/vmlinuz root=live:CDLABEL=test rd.live.image rd.debug rd.live.debug rd.live.overlay.overlayfs=1 console=ttyS0
     initrd /LiveOS/initrd.img
 }
 
