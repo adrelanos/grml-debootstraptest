@@ -99,7 +99,7 @@ EOF
 true "Creating ISO..."
 
 ## '-V test' set label to 'test'. This must match the 'root=live:CDLABEL=test' kernel command line.
-grub-mkrescue -V test -o "$ISO_IMAGE_FILE" "$ISO_TMP_DIR"
+grub-mkrescue --verbose -V test -o "$ISO_IMAGE_FILE" "$ISO_TMP_DIR"
 
 true "Unmounting..."
 
