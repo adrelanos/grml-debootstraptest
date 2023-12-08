@@ -16,9 +16,9 @@ def process_grub_line(input_line, extra_params):
         pre_linux_whitespace = parts[0]
         post_linux_whitespace = parts[1][:len(parts[1]) - len(parts[1].lstrip())]
 
-        # Remove root=UUID and append extra kernel parameters
+        # Remove root=UUID, 'ro', and append extra kernel parameters
         remaining_parts = parts[1].lstrip().split()
-        remaining_parts = [part for part in remaining_parts if not part.startswith('root=UUID')]
+        remaining_parts = [part for part in remaining_parts if not part.startswith('root=UUID') and part != 'ro']
         processed_line = pre_linux_whitespace + 'linux' + post_linux_whitespace + ' '.join(remaining_parts) + ' ' + ' '.join(extra_params) + '\n'
 
         return processed_line
