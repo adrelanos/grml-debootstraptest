@@ -83,7 +83,7 @@ cp -a "${MNTPOINT}${initial_ramdisk_file}" "${ISO_TMP_DIR}/LiveOS/initrd.img"
 
 # Unmount partitions and clean up loopback device.
 true "Unmounting..."
-umount "${MNTPOINT}"/boot/efi
+umount "${MNTPOINT}/boot/efi"
 umount "${MNTPOINT}"
 kpartx -d "${TARGET}"
 rmdir "${MNTPOINT}"
