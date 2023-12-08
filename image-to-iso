@@ -21,6 +21,9 @@ command -v mksquashfs >/dev/null
 command -v grub-mkrescue >/dev/null
 command -v xorriso >/dev/null
 
+## grub-mkrescue undocumented dependencies
+apt install --no-install-recommends grub-efi-amd64-bin grub-efi-amd64-signed mtools
+
 IMAGE_FILE="/home/$SUDO_USER/grml-debootstraptestbin/test.img"
 ISO_TMP_DIR="/home/$SUDO_USER/grml-debootstraptestbin/iso_tmp"
 ISO_IMAGE_FILE="/home/$SUDO_USER/grml-debootstraptestbin/output.iso"
