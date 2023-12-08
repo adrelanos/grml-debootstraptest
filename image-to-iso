@@ -59,9 +59,13 @@ initial_ramdisk_file="/boot/initrd.img-${KVERSION}"
 
 true "Creating squashfs..."
 
+## Copy kernel and initial ramdisk from VM image to temporary ISO directory.
 cp -a "${MNTPOINT}${kernel_file}" "${ISO_TMP_DIR}/LiveOS/vmlinuz"
 cp -a "${MNTPOINT}${initial_ramdisk_file}" "${ISO_TMP_DIR}/LiveOS/initrd.img"
 
+## Take VM image contents and create the squashfs.img file in folder LiveOS
+## in the temporary ISO directory.
+##
 ## /LiveOS/squashfs.img is a dracut default.
 ##
 ## During development when testing different kernel boot parameters it is probably
@@ -96,6 +100,8 @@ EOF
 
 true "Creating ISO..."
 
+## Use grub-mkrescue to create an ISO from the temporary ISO directory.
+##
 ## '-V test' set label to 'test'. This must match the 'root=live:CDLABEL=test' kernel command line.
 grub-mkrescue --verbose -V test -o "$ISO_IMAGE_FILE" "$ISO_TMP_DIR"
 
