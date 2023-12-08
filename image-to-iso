@@ -6,7 +6,7 @@
 
 ## image is required to include the live-boot package already
 
-## TODO: port to squashfs-tools-ng
+## TODO: port to squashfs-tools-ng? faster? smaller?
 
 set -x
 set -e
@@ -46,22 +46,6 @@ MNTPOINT=$(mktemp -d)
 
 mount "$TARGET" "$MNTPOINT"
 mount "$EFI_TARGET" "${MNTPOINT}"/boot/efi
-
-# true "Setup live-boot in chroot..."
-#
-# mount -t proc none "${MNTPOINT}"/proc
-# mount -t sysfs none "${MNTPOINT}"/sys
-# mount -t devtmpfs udev "${MNTPOINT}"/dev
-# mount -t devpts devpts "${MNTPOINT}"/dev/pts
-#
-# chroot "$MNTPOINT" apt-get update
-# DEBIAN_FRONTEND=noninteractive chroot "$MNTPOINT" apt-get install --no-install-recommends -y live-boot
-# chroot "$MNTPOINT" apt-get clean
-#
-# umount "${MNTPOINT}"/dev/pts
-# umount "${MNTPOINT}"/dev
-# umount "${MNTPOINT}"/sys
-# umount "${MNTPOINT}"/proc
 
 true "Preparing ISO..."
 
