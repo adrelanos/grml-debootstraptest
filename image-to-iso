@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
+# Usage: image-to-iso <raw_image_file> <iso_tmp_dir> <iso_image_file>
+
 # This script generates a bootable ISO image.
 # It takes a bootable raw disk image as input and outputs a bootable ISO image.
 # The script is designed to support both booting methods:
@@ -19,7 +21,7 @@ set -o pipefail
 
 parse_arguments() {
   if [ $# -lt 3 ]; then
-    echo "Usage: $0 <raw_image_file> <iso_tmp_dir> <iso_image_file>"
+    echo "Usage: $0 <raw_image_file> <iso_tmp_dir> <iso_image_file>" >&2
     exit 1
   fi
 
