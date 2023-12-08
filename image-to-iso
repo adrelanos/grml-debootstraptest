@@ -47,8 +47,6 @@ MNTPOINT=$(mktemp -d)
 mount "$TARGET" "$MNTPOINT"
 mount "$EFI_TARGET" "${MNTPOINT}"/boot/efi
 
-true "Preparing ISO..."
-
 rm -r -f "$ISO_TMP_DIR"
 
 mkdir --parents "${ISO_TMP_DIR}/LiveOS"
@@ -58,6 +56,8 @@ KVERSION=$(cd "$MNTPOINT"/boot && find vmlinuz-* | tail -1 | sed 's@vmlinuz-@@')
 
 kernel_file="/boot/vmlinuz-${KVERSION}"
 initial_ramdisk_file="/boot/initrd.img-${KVERSION}"
+
+true "Creating squashfs..."
 
 cp -a "${MNTPOINT}${kernel_file}" "${ISO_TMP_DIR}/LiveOS/vmlinuz"
 cp -a "${MNTPOINT}${initial_ramdisk_file}" "${ISO_TMP_DIR}/LiveOS/initrd.img"
@@ -76,6 +76,8 @@ kpartx -d "${TARGET}"
 
 rmdir "${MNTPOINT}"
 
+
+true "Preparing ISO..."
 
 ## Fedora 39 example:
 ## linux /images/pxeboot/vmlinuz root=live:CDLABEL=Fedora-WS-Live-39-1-5  rd.live.image quiet rhgb
