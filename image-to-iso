@@ -23,7 +23,7 @@ parse_arguments() {
     exit 1
   fi
 
-  IMAGE_FILE="$1"
+  RAW_IMAGE_FILE="$1"
   ISO_TMP_DIR="$2"
   ISO_IMAGE_FILE="$3"
 }
@@ -51,7 +51,7 @@ check_dependencies() {
 setup_image_mount() {
   # Mount the image file and set up loopback device.
   true "Mounting..."
-  DEVINFO=$(kpartx -asv "$IMAGE_FILE")
+  DEVINFO=$(kpartx -asv "$RAW_IMAGE_FILE")
   if [ -z "${DEVINFO}" ] ; then
     echo "Error setting up loopback device." >&2
     exit 1
