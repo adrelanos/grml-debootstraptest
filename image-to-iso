@@ -49,8 +49,10 @@ mount "$EFI_TARGET" "${MNTPOINT}"/boot/efi
 
 true "Preparing ISO..."
 
-mkdir -p "${ISO_TMP_DIR}/LiveOS"
-mkdir -p "${ISO_TMP_DIR}/boot/grub"
+rm -r -f "$ISO_TMP_DIR"
+
+mkdir --parents "${ISO_TMP_DIR}/LiveOS"
+mkdir --parents "${ISO_TMP_DIR}/boot/grub"
 
 KVERSION=$(cd "$MNTPOINT"/boot && find vmlinuz-* | tail -1 | sed 's@vmlinuz-@@')
 
@@ -66,10 +68,20 @@ cp -a "${MNTPOINT}${initial_ramdisk_file}" "${ISO_TMP_DIR}/LiveOS/initrd.img"
 ## unnecessary to re-create the squashfs over and over again.
 mksquashfs "${MNTPOINT}" "${ISO_TMP_DIR}/LiveOS/squashfs.img" -noappend
 
+true "Unmounting..."
+
+umount "${MNTPOINT}"/boot/efi
+umount "${MNTPOINT}"
+kpartx -d "${TARGET}"
+
+rmdir "${MNTPOINT}"
+
+
 ## Fedora 39 example:
 ## linux /images/pxeboot/vmlinuz root=live:CDLABEL=Fedora-WS-Live-39-1-5  rd.live.image quiet rhgb
 
-cat << EOF > "${ISO_TMP_DIR}"/boot/grub/grub.cfg
+cat << EOF > "${ISO_TMP_DIR}/boot/grub/grub.cfg"
+
 set default="0"
 set timeout=10
 
@@ -85,14 +97,6 @@ true "Creating ISO..."
 ## '-V test' set label to 'test'. This must match the 'root=live:CDLABEL=test' kernel command line.
 grub-mkrescue --verbose -V test -o "$ISO_IMAGE_FILE" "$ISO_TMP_DIR"
 
-true "Unmounting..."
-
-umount "${MNTPOINT}"/boot/efi
-umount "${MNTPOINT}"
-kpartx -d "${TARGET}"
-
-rmdir "${MNTPOINT}"
-
-rm -r "$ISO_TMP_DIR"
+#rm -r "$ISO_TMP_DIR"
 
 true "Done."
