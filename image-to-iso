@@ -37,11 +37,6 @@ check_dependencies() {
   dpkg -l | grep mtools >/dev/null
 }
 
-# Define file paths for the image, temporary ISO directory, and the output ISO file.
-IMAGE_FILE="/home/$SUDO_USER/grml-debootstraptestbin/test.img"
-ISO_TMP_DIR="/home/$SUDO_USER/grml-debootstraptestbin/iso_tmp"
-ISO_IMAGE_FILE="/home/$SUDO_USER/grml-debootstraptestbin/output.iso"
-
 setup_image_mount() {
   # Mount the image file and set up loopback device.
   true "Mounting..."
@@ -84,15 +79,17 @@ get_file_names() {
   initial_ramdisk_file_name="initrd.img-${KVERSION}"
 }
 
-true "Creating squashfs..."
-## Take the contents of the VM image and create the squashfs.img file in the LiveOS folder
-## within the temporary ISO directory.
-##
-## The /LiveOS/squashfs.img path is a default setting used by dracut.
-##
-## During development, especially when testing various kernel boot parameters, it may be
-## unnecessary to repeatedly recreate the squashfs file.
-mksquashfs "${MNTPOINT}" "${ISO_TMP_DIR}/LiveOS/squashfs.img" -noappend
+create_squashfs() {
+  true "Creating squashfs..."
+  ## Take the contents of the VM image and create the squashfs.img file in the LiveOS folder
+  ## within the temporary ISO directory.
+  ##
+  ## The /LiveOS/squashfs.img path is a default setting used by dracut.
+  ##
+  ## During development, especially when testing various kernel boot parameters, it may be
+  ## unnecessary to repeatedly recreate the squashfs file.
+  mksquashfs "${MNTPOINT}" "${ISO_TMP_DIR}/LiveOS/squashfs.img" -noappend
+}
 
 copy_kernel_and_initial_ramdisk_and_grub_config() {
   # Copy kernel and initial ramdisk to the temporary ISO directory.
@@ -172,6 +169,7 @@ main() {
   mount_file_systems
   create_iso_directories
   get_file_names
+  create_squashfs
   copy_kernel_and_initial_ramdisk_and_grub_config
   unmount_cleanup
   prepare_iso
@@ -179,5 +177,10 @@ main() {
   cleanup
   true "Done."
 }
+
+# Define file paths for the image, temporary ISO directory, and the output ISO file.
+IMAGE_FILE="/home/$SUDO_USER/grml-debootstraptestbin/test.img"
+ISO_TMP_DIR="/home/$SUDO_USER/grml-debootstraptestbin/iso_tmp"
+ISO_IMAGE_FILE="/home/$SUDO_USER/grml-debootstraptestbin/output.iso"
 
 main
