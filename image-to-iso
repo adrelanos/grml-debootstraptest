@@ -92,7 +92,7 @@ umount "${MNTPOINT}"
 kpartx -d "${TARGET}"
 
 rmdir "${MNTPOINT}"
-#rm "$IMAGE_FILE"
+
 rm -r "$ISO_TMP_DIR"
 
 true "Done."
