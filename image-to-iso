@@ -17,58 +17,72 @@ set -x
 set -e
 set -o pipefail
 
-if [ ! "$(id -u)" = "0" ]; then
-   true "ERROR: Must be run with root privileges (sudo)! sudo $0" >&2
-   exit 1
-fi
+check_root() {
+  if [ ! "$(id -u)" = "0" ]; then
+    true "ERROR: Must be run with root privileges (sudo)! sudo $0" >&2
+    exit 1
+  fi
+}
 
-# Ensure necessary commands are available.
-test -x ./grub-raw-cfg-to-grub-iso-cfg
-command -v mksquashfs >/dev/null
-command -v grub-mkrescue >/dev/null
-command -v xorriso >/dev/null
+check_dependencies() {
+  # Ensure necessary commands are available.
+  test -x ./grub-raw-cfg-to-grub-iso-cfg
+  command -v mksquashfs >/dev/null
+  command -v grub-mkrescue >/dev/null
+  command -v xorriso >/dev/null
 
-# Undocumented dependencies by grub-mkrescue.
-dpkg -l | grep grub-efi-amd64-bin >/dev/null
-dpkg -l | grep grub-efi-amd64-signed >/dev/null
-dpkg -l | grep mtools >/dev/null
+  # Undocumented dependencies by grub-mkrescue.
+  dpkg -l | grep grub-efi-amd64-bin >/dev/null
+  dpkg -l | grep grub-efi-amd64-signed >/dev/null
+  dpkg -l | grep mtools >/dev/null
+}
 
 # Define file paths for the image, temporary ISO directory, and the output ISO file.
 IMAGE_FILE="/home/$SUDO_USER/grml-debootstraptestbin/test.img"
 ISO_TMP_DIR="/home/$SUDO_USER/grml-debootstraptestbin/iso_tmp"
 ISO_IMAGE_FILE="/home/$SUDO_USER/grml-debootstraptestbin/output.iso"
 
-# Mount the image file and set up loopback device.
-true "Mounting..."
-DEVINFO=$(kpartx -asv "$IMAGE_FILE")
-if [ -z "${DEVINFO}" ] ; then
+setup_image_mount() {
+  # Mount the image file and set up loopback device.
+  true "Mounting..."
+  DEVINFO=$(kpartx -asv "$IMAGE_FILE")
+  if [ -z "${DEVINFO}" ] ; then
     echo "Error setting up loopback device." >&2
     exit 1
-fi
+  fi
+}
 
-# Extract and prepare loopback device information.
-LOOP_PART="${DEVINFO##add map }"
-LOOP_PART="${LOOP_PART// */}"
-EFI_TARGET="/dev/mapper/$LOOP_PART"
-LOOP_PART="${LOOP_PART%p1}p3"
-TARGET="/dev/mapper/$LOOP_PART"
-MNTPOINT=$(mktemp -d)
+prepare_loopback_info() {
+  # Extract and prepare loopback device information.
+  LOOP_PART="${DEVINFO##add map }"
+  LOOP_PART="${LOOP_PART// */}"
+  EFI_TARGET="/dev/mapper/$LOOP_PART"
+  LOOP_PART="${LOOP_PART%p1}p3"
+  TARGET="/dev/mapper/$LOOP_PART"
+  MNTPOINT=$(mktemp -d)
+}
 
-# Mount the target file system and EFI partition.
-mount "$TARGET" "$MNTPOINT"
-mount "$EFI_TARGET" "${MNTPOINT}"/boot/efi
+mount_file_systems() {
+  # Mount the target file system and EFI partition.
+  mount "$TARGET" "$MNTPOINT"
+  mount "$EFI_TARGET" "${MNTPOINT}/boot/efi"
+}
 
-# Clear and create necessary directories in the temporary ISO directory.
-rm -r -f "$ISO_TMP_DIR"
-mkdir --parents "${ISO_TMP_DIR}/LiveOS"
-mkdir --parents "${ISO_TMP_DIR}/boot/grub"
+create_iso_directories() {
+  # Clear and create necessary directories in the temporary ISO directory.
+  rm -r -f "$ISO_TMP_DIR"
+  mkdir --parents "${ISO_TMP_DIR}/LiveOS"
+  mkdir --parents "${ISO_TMP_DIR}/boot/grub"
+}
 
-# Retrieve the kernel version from the mounted image.
-KVERSION=$(cd "$MNTPOINT/boot" && find vmlinuz-* | tail -1 | sed 's@vmlinuz-@@')
+get_file_names() {
+  # Retrieve the kernel version from the mounted image.
+  KVERSION=$(cd "$MNTPOINT/boot" && find vmlinuz-* | tail -1 | sed 's@vmlinuz-@@')
 
-# Define paths for the kernel file and initial ramdisk.
-kernel_file_name="vmlinuz-${KVERSION}"
-initial_ramdisk_file_name="initrd.img-${KVERSION}"
+  # Define paths for the kernel file and initial ramdisk.
+  kernel_file_name="vmlinuz-${KVERSION}"
+  initial_ramdisk_file_name="initrd.img-${KVERSION}"
+}
 
 true "Creating squashfs..."
 ## Take the contents of the VM image and create the squashfs.img file in the LiveOS folder
@@ -80,64 +94,90 @@ true "Creating squashfs..."
 ## unnecessary to repeatedly recreate the squashfs file.
 mksquashfs "${MNTPOINT}" "${ISO_TMP_DIR}/LiveOS/squashfs.img" -noappend
 
-# Copy kernel and initial ramdisk to the temporary ISO directory.
-cp -a "${MNTPOINT}/boot/${kernel_file_name}" "${ISO_TMP_DIR}/boot/${kernel_file_name}"
-cp -a "${MNTPOINT}/boot/${initial_ramdisk_file_name}" "${ISO_TMP_DIR}/boot/${initial_ramdisk_file_name}"
+copy_kernel_and_initial_ramdisk_and_grub_config() {
+  # Copy kernel and initial ramdisk to the temporary ISO directory.
+  cp -a "${MNTPOINT}/boot/${kernel_file_name}" "${ISO_TMP_DIR}/boot/${kernel_file_name}"
+  cp -a "${MNTPOINT}/boot/${initial_ramdisk_file_name}" "${ISO_TMP_DIR}/boot/${initial_ramdisk_file_name}"
+  cp -a "${MNTPOINT}/boot/grub/grub.cfg" "${ISO_TMP_DIR}/boot/grub-raw-image-temp.cfg"
+}
 
-cp -a "${MNTPOINT}/boot/grub/grub.cfg" "${ISO_TMP_DIR}/boot/grub-raw-image-temp.cfg"
+unmount_cleanup() {
+  # Unmount partitions and clean up loopback device.
+  true "Unmounting..."
+  umount "${MNTPOINT}/boot/efi"
+  umount "${MNTPOINT}"
+  kpartx -d "${TARGET}"
+  rmdir "${MNTPOINT}"
+}
 
-# Unmount partitions and clean up loopback device.
-true "Unmounting..."
-umount "${MNTPOINT}/boot/efi"
-umount "${MNTPOINT}"
-kpartx -d "${TARGET}"
-rmdir "${MNTPOINT}"
+prepare_iso() {
+  # Prepare the ISO file by creating a GRUB configuration file.
+  #
+  # Notes:
+  # - The /boot folder originates from the temporary ISO directory.
+  #   It will only be available during very early boot.
+  # - Once dracut set up the root system, there might be a different /boot,
+  #   which originates from the raw image.
+  # - This means kernel and initial ramdisk are duplicated. In theory,
+  #   it might be possible to omit adding the /boot folder from squashfs.img.
+  # - This might be confusing, but makes it easier to generate a
+  #   /boot/grub/grub.cfg file based on the VM image.
+  true "Preparing ISO..."
 
-# Prepare the ISO file by creating a GRUB configuration file.
-#
-# Notes:
-# - The /boot folder originates from the temporary ISO directory.
-#   It will only be available during very early boot.
-# - Once dracut set up the root system, there might be a different /boot,
-#   which originates from the raw image.
-# - This means kernel and initial ramdisk are duplicated. In theory,
-#   it might be possible to omit adding the /boot folder from squashfs.img.
-# - This might be confusing, but makes it easier to generate a
-#   /boot/grub/grub.cfg file based on the VM image.
-true "Preparing ISO..."
+  ## Was functional.
+  ##
+  # cat << EOF > "${ISO_TMP_DIR}/boot/grub/grub.cfg"
+  # set default="0"
+  # set timeout=10
+  # menuentry "Linux" {
+  #     linux /boot/${kernel_file_name} root=live:CDLABEL=test rd.live.image rd.debug rd.live.debug rd.live.overlay.overlayfs=1 console=ttyS0
+  #     initrd /boot/${initial_ramdisk_file_name}
+  # }
+  # EOF
 
-## Was functional.
-##
-# cat << EOF > "${ISO_TMP_DIR}/boot/grub/grub.cfg"
-# set default="0"
-# set timeout=10
-# menuentry "Linux" {
-#     linux /boot/${kernel_file_name} root=live:CDLABEL=test rd.live.image rd.debug rd.live.debug rd.live.overlay.overlayfs=1 console=ttyS0
-#     initrd /boot/${initial_ramdisk_file_name}
-# }
-# EOF
+  iso_grub_extra_params=""
+  iso_grub_extra_params+=" root=live:CDLABEL=test"
+  iso_grub_extra_params+=" rd.live.image"
+  iso_grub_extra_params+=" rd.live.overlay.overlayfs=1"
+  iso_grub_extra_params+=" rd.debug"
+  iso_grub_extra_params+=" rd.live.debug"
+  iso_grub_extra_params+=" console=ttyS0"
 
-iso_grub_extra_params=""
-iso_grub_extra_params+=" root=live:CDLABEL=test"
-iso_grub_extra_params+=" rd.live.image"
-iso_grub_extra_params+=" rd.live.overlay.overlayfs=1"
-iso_grub_extra_params+=" rd.debug"
-iso_grub_extra_params+=" rd.live.debug"
-iso_grub_extra_params+=" console=ttyS0"
+  # Convert grub.cfg from raw image to grub.cfg usable for ISO image.
+  #
+  # Keep original grub-raw-image-temp.cfg for later comparison purposes.
+  ./grub-raw-cfg-to-grub-iso-cfg "${ISO_TMP_DIR}/boot/grub-raw-image-temp.cfg" "${ISO_TMP_DIR}/boot/grub/grub.cfg" "$iso_grub_extra_params"
+}
 
-# Convert grub.cfg from raw image to grub.cfg usable for ISO image.
-#
-# Keep original grub-raw-image-temp.cfg for later comparison purposes.
-./grub-raw-cfg-to-grub-iso-cfg "${ISO_TMP_DIR}/boot/grub-raw-image-temp.cfg" "${ISO_TMP_DIR}/boot/grub/grub.cfg" "$iso_grub_extra_params"
+create_iso() {
+  # Create the ISO using grub-mkrescue based on the temporary ISO directory.
+  #
+  # '-V test' set label to 'test'. This must match the 'root=live:CDLABEL=test' kernel command line.
+  true "Creating ISO..."
+  grub-mkrescue --verbose -V test -o "$ISO_IMAGE_FILE" "$ISO_TMP_DIR"
+}
 
-# Create the ISO using grub-mkrescue based on the temporary ISO directory.
-#
-# '-V test' set label to 'test'. This must match the 'root=live:CDLABEL=test' kernel command line.
-true "Creating ISO..."
-grub-mkrescue --verbose -V test -o "$ISO_IMAGE_FILE" "$ISO_TMP_DIR"
+cleanup() {
+  # Cleanup temporary files (uncomment to enable).
+  # Not deleting for easier debugging.
+  #rm -r "$ISO_TMP_DIR"
+  true "Ok"
+}
 
-# Cleanup temporary files (uncomment to enable).
-# Not deleting for easier debugging.
-#rm -r "$ISO_TMP_DIR"
+main() {
+  check_root
+  check_dependencies
+  setup_image_mount
+  prepare_loopback_info
+  mount_file_systems
+  create_iso_directories
+  get_file_names
+  copy_kernel_and_initial_ramdisk_and_grub_config
+  unmount_cleanup
+  prepare_iso
+  create_iso
+  cleanup
+  true "Done."
+}
 
-true "Done."
+main
