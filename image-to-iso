@@ -23,6 +23,7 @@ if [ ! "$(id -u)" = "0" ]; then
 fi
 
 # Ensure necessary commands are available.
+test -x ./grub-raw-cfg-to-grub-iso-cfg
 command -v mksquashfs >/dev/null
 command -v grub-mkrescue >/dev/null
 command -v xorriso >/dev/null
@@ -83,6 +84,8 @@ mksquashfs "${MNTPOINT}" "${ISO_TMP_DIR}/LiveOS/squashfs.img" -noappend
 cp -a "${MNTPOINT}/boot/${kernel_file_name}" "${ISO_TMP_DIR}/boot/${kernel_file_name}"
 cp -a "${MNTPOINT}/boot/${initial_ramdisk_file_name}" "${ISO_TMP_DIR}/boot/${initial_ramdisk_file_name}"
 
+cp -a "${MNTPOINT}/boot/grub/grub.cfg" "${ISO_TMP_DIR}/boot/grub-raw-image-temp.cfg"
+
 # Unmount partitions and clean up loopback device.
 true "Unmounting..."
 umount "${MNTPOINT}/boot/efi"
@@ -102,14 +105,22 @@ rmdir "${MNTPOINT}"
 # - This might be confusing, but makes it easier to generate a
 #   /boot/grub/grub.cfg file based on the VM image.
 true "Preparing ISO..."
-cat << EOF > "${ISO_TMP_DIR}/boot/grub/grub.cfg"
-set default="0"
-set timeout=10
-menuentry "Linux" {
-    linux /boot/${kernel_file_name} root=live:CDLABEL=test rd.live.image rd.debug rd.live.debug rd.live.overlay.overlayfs=1 console=ttyS0
-    initrd /boot/${initial_ramdisk_file_name}
-}
-EOF
+
+## Was functional.
+##
+# cat << EOF > "${ISO_TMP_DIR}/boot/grub/grub.cfg"
+# set default="0"
+# set timeout=10
+# menuentry "Linux" {
+#     linux /boot/${kernel_file_name} root=live:CDLABEL=test rd.live.image rd.debug rd.live.debug rd.live.overlay.overlayfs=1 console=ttyS0
+#     initrd /boot/${initial_ramdisk_file_name}
+# }
+# EOF
+
+# Convert grub.cfg from raw image to grub.cfg usable for ISO image.
+#
+# Keep original grub-raw-image-temp.cfg for later comparison purposes.
+./grub-raw-cfg-to-grub-iso-cfg "${ISO_TMP_DIR}/boot/grub-raw-image-temp.cfg" "${ISO_TMP_DIR}/boot/grub/grub.cfg"
 
 # Create the ISO using grub-mkrescue based on the temporary ISO directory.
 #
