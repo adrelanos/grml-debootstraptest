@@ -27,8 +27,10 @@ command -v mksquashfs >/dev/null
 command -v grub-mkrescue >/dev/null
 command -v xorriso >/dev/null
 
-# Install undocumented dependencies for grub-mkrescue.
-apt install --no-install-recommends grub-efi-amd64-bin grub-efi-amd64-signed mtools
+# Undocumented dependencies by grub-mkrescue.
+dpkg -l | grep --quiet grub-efi-amd64-bin >/dev/null
+dpkg -l | grep --quiet grub-efi-amd64-signed >/dev/null
+dpkg -l | grep --quiet mtools >/dev/null
 
 # Define file paths for the image, temporary ISO directory, and the output ISO file.
 IMAGE_FILE="/home/$SUDO_USER/grml-debootstraptestbin/test.img"
