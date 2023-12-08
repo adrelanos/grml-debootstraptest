@@ -28,9 +28,9 @@ command -v grub-mkrescue >/dev/null
 command -v xorriso >/dev/null
 
 # Undocumented dependencies by grub-mkrescue.
-dpkg -l | grep --quiet grub-efi-amd64-bin >/dev/null
-dpkg -l | grep --quiet grub-efi-amd64-signed >/dev/null
-dpkg -l | grep --quiet mtools >/dev/null
+dpkg -l | grep grub-efi-amd64-bin >/dev/null
+dpkg -l | grep grub-efi-amd64-signed >/dev/null
+dpkg -l | grep mtools >/dev/null
 
 # Define file paths for the image, temporary ISO directory, and the output ISO file.
 IMAGE_FILE="/home/$SUDO_USER/grml-debootstraptestbin/test.img"
@@ -80,8 +80,8 @@ true "Creating squashfs..."
 mksquashfs "${MNTPOINT}" "${ISO_TMP_DIR}/LiveOS/squashfs.img" -noappend
 
 # Copy kernel and initial ramdisk to the temporary ISO directory.
-cp -a "${MNTPOINT}/boot/${kernel_file_name}" "${ISO_TMP_DIR}/LiveOS/${kernel_file_name}"
-cp -a "${MNTPOINT}/boot/${initial_ramdisk_file_name}" "${ISO_TMP_DIR}/LiveOS/${initial_ramdisk_file_name}"
+cp -a "${MNTPOINT}/boot/${kernel_file_name}" "${ISO_TMP_DIR}/boot/${kernel_file_name}"
+cp -a "${MNTPOINT}/boot/${initial_ramdisk_file_name}" "${ISO_TMP_DIR}/boot/${initial_ramdisk_file_name}"
 
 # Unmount partitions and clean up loopback device.
 true "Unmounting..."
@@ -91,13 +91,23 @@ kpartx -d "${TARGET}"
 rmdir "${MNTPOINT}"
 
 # Prepare the ISO file by creating a GRUB configuration file.
+#
+# Notes:
+# - The /boot folder originates from the temporary ISO directory.
+#   It will only be available during very early boot.
+# - Once dracut set up the root system, there might be a different /boot,
+#   which originates from the raw image.
+# - This means kernel and initial ramdisk are duplicated. In theory,
+#   it might be possible to omit adding the /boot folder from squashfs.img.
+# - This might be confusing, but makes it easier to generate a
+#   /boot/grub/grub.cfg file based on the VM image.
 true "Preparing ISO..."
 cat << EOF > "${ISO_TMP_DIR}/boot/grub/grub.cfg"
 set default="0"
 set timeout=10
 menuentry "Linux" {
-    linux /LiveOS/${kernel_file_name} root=live:CDLABEL=test rd.live.image rd.debug rd.live.debug rd.live.overlay.overlayfs=1 console=ttyS0
-    initrd /LiveOS/${initial_ramdisk_file_name}
+    linux /boot/${kernel_file_name} root=live:CDLABEL=test rd.live.image rd.debug rd.live.debug rd.live.overlay.overlayfs=1 console=ttyS0
+    initrd /boot/${initial_ramdisk_file_name}
 }
 EOF
 
