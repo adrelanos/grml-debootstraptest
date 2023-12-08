@@ -117,10 +117,18 @@ true "Preparing ISO..."
 # }
 # EOF
 
+iso_grub_extra_params=""
+iso_grub_extra_params+=" root=live:CDLABEL=test"
+iso_grub_extra_params+=" rd.live.image"
+iso_grub_extra_params+=" rd.debug"
+iso_grub_extra_params+=" rd.live.debug"
+iso_grub_extra_params+=" rd.live.overlay.overlayfs=1"
+iso_grub_extra_params+=" console=ttyS0"
+
 # Convert grub.cfg from raw image to grub.cfg usable for ISO image.
 #
 # Keep original grub-raw-image-temp.cfg for later comparison purposes.
-./grub-raw-cfg-to-grub-iso-cfg "${ISO_TMP_DIR}/boot/grub-raw-image-temp.cfg" "${ISO_TMP_DIR}/boot/grub/grub.cfg"
+./grub-raw-cfg-to-grub-iso-cfg "${ISO_TMP_DIR}/boot/grub-raw-image-temp.cfg" "${ISO_TMP_DIR}/boot/grub/grub.cfg" "$iso_grub_extra_params"
 
 # Create the ISO using grub-mkrescue based on the temporary ISO directory.
 #
@@ -129,6 +137,7 @@ true "Creating ISO..."
 grub-mkrescue --verbose -V test -o "$ISO_IMAGE_FILE" "$ISO_TMP_DIR"
 
 # Cleanup temporary files (uncomment to enable).
+# Not deleting for easier debugging.
 #rm -r "$ISO_TMP_DIR"
 
 true "Done."
