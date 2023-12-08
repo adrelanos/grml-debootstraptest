@@ -59,10 +59,6 @@ initial_ramdisk_file="/boot/initrd.img-${KVERSION}"
 
 true "Creating squashfs..."
 
-## Copy kernel and initial ramdisk from VM image to temporary ISO directory.
-cp -a "${MNTPOINT}${kernel_file}" "${ISO_TMP_DIR}/LiveOS/vmlinuz"
-cp -a "${MNTPOINT}${initial_ramdisk_file}" "${ISO_TMP_DIR}/LiveOS/initrd.img"
-
 ## Take VM image contents and create the squashfs.img file in folder LiveOS
 ## in the temporary ISO directory.
 ##
@@ -71,6 +67,10 @@ cp -a "${MNTPOINT}${initial_ramdisk_file}" "${ISO_TMP_DIR}/LiveOS/initrd.img"
 ## During development when testing different kernel boot parameters it is probably
 ## unnecessary to re-create the squashfs over and over again.
 mksquashfs "${MNTPOINT}" "${ISO_TMP_DIR}/LiveOS/squashfs.img" -noappend
+
+## Copy kernel and initial ramdisk from VM image to temporary ISO directory.
+cp -a "${MNTPOINT}${kernel_file}" "${ISO_TMP_DIR}/LiveOS/vmlinuz"
+cp -a "${MNTPOINT}${initial_ramdisk_file}" "${ISO_TMP_DIR}/LiveOS/initrd.img"
 
 true "Unmounting..."
 
