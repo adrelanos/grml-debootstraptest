@@ -6,21 +6,32 @@
 
 import sys
 
+def process_grub_line(input_line, extra_params):
+    if 'search --no-floppy --fs-uuid --set=root' in input_line:
+        return None  # Skip the line
+
+    if input_line.lstrip().startswith('linux'):
+        # Preserve the original whitespace before 'linux' and between 'linux' and the rest of the line
+        parts = input_line.split('linux')
+        pre_linux_whitespace = parts[0]
+        post_linux_whitespace = parts[1][:len(parts[1]) - len(parts[1].lstrip())]
+
+        # Remove root=UUID and append extra kernel parameters
+        remaining_parts = parts[1].lstrip().split()
+        remaining_parts = [part for part in remaining_parts if not part.startswith('root=UUID')]
+        processed_line = pre_linux_whitespace + 'linux' + post_linux_whitespace + ' '.join(remaining_parts) + ' ' + ' '.join(extra_params) + '\n'
+
+        return processed_line
+
+    return input_line  # Return the line unmodified if it doesn't need processing
+
 def process_grub_config(input_file, output_file, extra_params):
     try:
         with open(input_file, 'r') as infile, open(output_file, 'w') as outfile:
             for line in infile:
-                if 'search --no-floppy --fs-uuid --set=root' in line:
-                    continue  # Skip the line
-
-                stripped_line = line.strip()
-                if stripped_line.startswith('linux'):
-                    # Remove root=UUID and append extra kernel parameters
-                    parts = stripped_line.split()
-                    parts = [part for part in parts if not 'root=UUID' in part]
-                    line = line[:line.find('linux')] + ' '.join(parts) + ' ' + ' '.join(extra_params) + '\n'
-
-                outfile.write(line)
+                processed_line = process_grub_line(line, extra_params)
+                if processed_line is not None:
+                    outfile.write(processed_line)
     except IOError as e:
         print(f"Error: {e}")
 
