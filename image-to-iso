@@ -120,9 +120,9 @@ true "Preparing ISO..."
 iso_grub_extra_params=""
 iso_grub_extra_params+=" root=live:CDLABEL=test"
 iso_grub_extra_params+=" rd.live.image"
+iso_grub_extra_params+=" rd.live.overlay.overlayfs=1"
 iso_grub_extra_params+=" rd.debug"
 iso_grub_extra_params+=" rd.live.debug"
-iso_grub_extra_params+=" rd.live.overlay.overlayfs=1"
 iso_grub_extra_params+=" console=ttyS0"
 
 # Convert grub.cfg from raw image to grub.cfg usable for ISO image.
