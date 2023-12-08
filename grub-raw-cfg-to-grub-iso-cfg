@@ -13,11 +13,12 @@ def process_grub_config(input_file, output_file, extra_params):
                 if 'search --no-floppy --fs-uuid --set=root' in line:
                     continue  # Skip the line
 
-                if line.strip().startswith('linux'):
+                stripped_line = line.strip()
+                if stripped_line.startswith('linux'):
                     # Remove root=UUID and append extra kernel parameters
-                    parts = line.split()
+                    parts = stripped_line.split()
                     parts = [part for part in parts if not 'root=UUID' in part]
-                    line = ' '.join(parts) + ' ' + ' '.join(extra_params) + '\n'
+                    line = line[:line.find('linux')] + ' '.join(parts) + ' ' + ' '.join(extra_params) + '\n'
 
                 outfile.write(line)
     except IOError as e:
