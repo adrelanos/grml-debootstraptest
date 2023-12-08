@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# SPDX-FileCopyrightText: 2023 - 2023 ENCRYPTED SUPPORT LP <adrelanos@kicksecure.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+set -x
+set -e
+
+## sudo apt install --no-install-recommends ovmf
+
+qemu-system-x86_64 \
+    -nographic \
+    -bios /usr/share/ovmf/OVMF.fd \
+    -m 1024 \
+    -boot d \
+    -cdrom ~/grml-debootstraptestbin/output.iso
