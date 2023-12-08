@@ -40,6 +40,7 @@ create_img() {
    export DEBOOTSTRAP=mmdebstrap
    export INITRD_GENERATOR=dracut
    export http_proxy=http://127.0.0.1:3142
+   ## TODO: use --add instead -a
    export INITRD_GENERATOR_OPTS='-a dmsquash-live'
 
    sudo cp --verbose ./packages-custom /etc/debootstrap/packages-custom

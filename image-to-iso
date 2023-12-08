@@ -70,6 +70,8 @@ KVERSION=$(cd "$MNTPOINT"/boot && find vmlinuz-* | tail -1 | sed 's@vmlinuz-@@')
 cp -a "${MNTPOINT}"/boot/vmlinuz-"${KVERSION}" "${ISO_TMP_DIR}"/LiveOS/vmlinuz
 cp -a "${MNTPOINT}"/boot/initrd.img-"${KVERSION}" "${ISO_TMP_DIR}"/LiveOS/initrd.img
 
+## /LiveOS/squashfs.img is a dracut default.
+##
 ## During development when testing different kernel boot parameters it is probably
 ## unnecessary to re-create the squashfs over and over again.
 mksquashfs "${MNTPOINT}" "${ISO_TMP_DIR}/LiveOS"/squashfs.img -noappend
