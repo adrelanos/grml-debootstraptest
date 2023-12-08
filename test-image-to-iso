@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# SPDX-FileCopyrightText: 2023 - 2023 ENCRYPTED SUPPORT LP <adrelanos@kicksecure.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Define file paths for the image, temporary ISO directory, and the output ISO file.
+IMAGE_FILE="/home/$SUDO_USER/grml-debootstraptestbin/test.img"
+ISO_TMP_DIR="/home/$SUDO_USER/grml-debootstraptestbin/iso_tmp"
+ISO_IMAGE_FILE="/home/$SUDO_USER/grml-debootstraptestbin/output.iso"
+
+./image-to-iso "$IMAGE_FILE" "$ISO_TMP_DIR" "$ISO_IMAGE_FILE"

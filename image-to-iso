@@ -17,6 +17,17 @@ set -x
 set -e
 set -o pipefail
 
+parse_arguments() {
+  if [ $# -lt 3 ]; then
+    echo "Usage: $0 <raw_image_file> <iso_tmp_dir> <iso_image_file>"
+    exit 1
+  fi
+
+  IMAGE_FILE="$1"
+  ISO_TMP_DIR="$2"
+  ISO_IMAGE_FILE="$3"
+}
+
 check_root() {
   if [ ! "$(id -u)" = "0" ]; then
     true "ERROR: Must be run with root privileges (sudo)! sudo $0" >&2
@@ -162,6 +173,7 @@ cleanup() {
 }
 
 main() {
+  parse_arguments
   check_root
   check_dependencies
   setup_image_mount
@@ -177,10 +189,5 @@ main() {
   cleanup
   true "Done."
 }
-
-# Define file paths for the image, temporary ISO directory, and the output ISO file.
-IMAGE_FILE="/home/$SUDO_USER/grml-debootstraptestbin/test.img"
-ISO_TMP_DIR="/home/$SUDO_USER/grml-debootstraptestbin/iso_tmp"
-ISO_IMAGE_FILE="/home/$SUDO_USER/grml-debootstraptestbin/output.iso"
 
 main
