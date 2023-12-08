@@ -61,11 +61,11 @@ mkdir --parents "${ISO_TMP_DIR}/LiveOS"
 mkdir --parents "${ISO_TMP_DIR}/boot/grub"
 
 # Retrieve the kernel version from the mounted image.
-KVERSION=$(cd "$MNTPOINT"/boot && find vmlinuz-* | tail -1 | sed 's@vmlinuz-@@')
+KVERSION=$(cd "$MNTPOINT/boot" && find vmlinuz-* | tail -1 | sed 's@vmlinuz-@@')
 
 # Define paths for the kernel file and initial ramdisk.
-kernel_file="/boot/vmlinuz-${KVERSION}"
-initial_ramdisk_file="/boot/initrd.img-${KVERSION}"
+kernel_file_name="vmlinuz-${KVERSION}"
+initial_ramdisk_file_name="initrd.img-${KVERSION}"
 
 true "Creating squashfs..."
 ## Take the contents of the VM image and create the squashfs.img file in the LiveOS folder
@@ -78,8 +78,8 @@ true "Creating squashfs..."
 mksquashfs "${MNTPOINT}" "${ISO_TMP_DIR}/LiveOS/squashfs.img" -noappend
 
 # Copy kernel and initial ramdisk to the temporary ISO directory.
-cp -a "${MNTPOINT}${kernel_file}" "${ISO_TMP_DIR}/LiveOS/vmlinuz"
-cp -a "${MNTPOINT}${initial_ramdisk_file}" "${ISO_TMP_DIR}/LiveOS/initrd.img"
+cp -a "${MNTPOINT}/boot/${kernel_file_name}" "${ISO_TMP_DIR}/LiveOS/${kernel_file_name}"
+cp -a "${MNTPOINT}/boot/${initial_ramdisk_file_name}" "${ISO_TMP_DIR}/LiveOS/${initial_ramdisk_file_name}"
 
 # Unmount partitions and clean up loopback device.
 true "Unmounting..."
@@ -94,8 +94,8 @@ cat << EOF > "${ISO_TMP_DIR}/boot/grub/grub.cfg"
 set default="0"
 set timeout=10
 menuentry "Linux" {
-    linux /LiveOS/vmlinuz root=live:CDLABEL=test rd.live.image rd.debug rd.live.debug rd.live.overlay.overlayfs=1 console=ttyS0
-    initrd /LiveOS/initrd.img
+    linux /LiveOS/${kernel_file_name} root=live:CDLABEL=test rd.live.image rd.debug rd.live.debug rd.live.overlay.overlayfs=1 console=ttyS0
+    initrd /LiveOS/${initial_ramdisk_file_name}
 }
 EOF
 
