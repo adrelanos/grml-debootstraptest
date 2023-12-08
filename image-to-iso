@@ -107,7 +107,7 @@ unmount_cleanup() {
   rmdir "${MNTPOINT}"
 }
 
-prepare_iso() {
+grub_raw_image_config_to_grub_iso_image_config() {
   # Prepare the ISO file by creating a GRUB configuration file.
   #
   # Notes:
@@ -172,7 +172,7 @@ main() {
   create_squashfs
   copy_kernel_and_initial_ramdisk_and_grub_config
   unmount_cleanup
-  prepare_iso
+  grub_raw_image_config_to_grub_iso_image_config
   create_iso
   cleanup
   true "Done."
