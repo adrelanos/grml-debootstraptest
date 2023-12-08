@@ -14,6 +14,7 @@ sudo apt-get install qemu-system-arm qemu-system-aarch64 qemu-efi-aarch64 qemu-u
 ## password: changeme
 
 qemu-system-x86_64 \
+    -nographic \
     -bios /usr/share/ovmf/OVMF.fd \
     -m 1024 \
     -drive format=raw,file=/home/user/grml-debootstraptestbin/test.img
