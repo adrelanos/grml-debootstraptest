@@ -4,7 +4,11 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-# This script creates a live-boot ISO image.
+# This script generates a bootable ISO image.
+# It takes a bootable raw disk image as input and outputs a bootable ISO image.
+# The script is designed to support both booting methods:
+# - EFI (Unified Extensible Firmware Interface) and,
+# - legacy BIOS booting.
 
 # TODO: Consider porting to squashfs-tools-ng for potential improvements in speed and size reduction.
 
