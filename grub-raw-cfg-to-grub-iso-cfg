@@ -37,7 +37,7 @@ def process_grub_config(input_file, output_file, extra_params):
 
 def main():
     if len(sys.argv) < 4:
-        print("Usage: python script.py <input_grub.cfg> <output_grub-iso.cfg> <extra_param1> [<extra_param2> ...]")
+        print("Usage: grub-raw-cfg-to-grub-iso-cfg <input_grub.cfg> <output_grub-iso.cfg> <extra_param1> [<extra_param2> ...]")
         sys.exit(1)
 
     input_grub_file = sys.argv[1]
