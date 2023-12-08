@@ -1,0 +1,38 @@
+#!/usr/bin/python3 -u
+
+# SPDX-FileCopyrightText: 2023 - 2023 ENCRYPTED SUPPORT LP <adrelanos@kicksecure.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+import sys
+
+def process_grub_config(input_file, output_file, extra_params):
+    try:
+        with open(input_file, 'r') as infile, open(output_file, 'w') as outfile:
+            for line in infile:
+                if 'search --no-floppy --fs-uuid --set=root' in line:
+                    continue  # Skip the line
+
+                if line.strip().startswith('linux'):
+                    # Remove root=UUID and append extra kernel parameters
+                    parts = line.split()
+                    parts = [part for part in parts if not 'root=UUID' in part]
+                    line = ' '.join(parts) + ' ' + ' '.join(extra_params) + '\n'
+
+                outfile.write(line)
+    except IOError as e:
+        print(f"Error: {e}")
+
+def main():
+    if len(sys.argv) < 4:
+        print("Usage: python script.py <input_grub.cfg> <output_grub-iso.cfg> <extra_param1> [<extra_param2> ...]")
+        sys.exit(1)
+
+    input_grub_file = sys.argv[1]
+    output_grub_file = sys.argv[2]
+    extra_kernel_params = sys.argv[3:]
+
+    process_grub_config(input_grub_file, output_grub_file, extra_kernel_params)
+
+if __name__ == "__main__":
+    main()
