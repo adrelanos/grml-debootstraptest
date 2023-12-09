@@ -194,7 +194,7 @@ cleanup() {
 }
 
 main() {
-  parse_arguments
+  parse_arguments "$@"
   check_root
   check_dependencies
   setup_image_mount
@@ -211,4 +211,4 @@ main() {
   true "Done."
 }
 
-main
+main "$@"
