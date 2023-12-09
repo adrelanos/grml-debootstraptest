@@ -47,6 +47,10 @@ check_dependencies() {
   command -v mksquashfs >/dev/null
   command -v grub-mkrescue >/dev/null
   command -v xorriso >/dev/null
+  command -v kpartx >/dev/null
+  command -v mount >/dev/null
+  command -v umount >/dev/null
+  command -v rmdir >/dev/null
 
   # Undocumented dependencies by grub-mkrescue.
   dpkg -l | grep grub-efi-amd64-bin >/dev/null
@@ -127,6 +131,7 @@ copy_kernel_and_initial_ramdisk_and_grub_config() {
 
 unmount_cleanup() {
   true "Unmount partitions and clean up loopback device..."
+  ## TODO: use derivative-maker help-steps/unmount-helper
   umount "${MNTPOINT}/boot/efi"
   umount "${MNTPOINT}"
   kpartx -d "${ROOTFS_TARGET}"
