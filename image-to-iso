@@ -155,17 +155,25 @@ copy_kernel_and_initial_ramdisk_and_grub_config() {
 unmount_cleanup() {
   true "Unmount partitions and clean up loopback device..."
 
-  ## TODO: use derivative-maker help-steps/unmount-helper
+  ## syntax:
+  #~/derivative-maker/help-steps/unmount-helper -- /tmp/user/0/tmp.6UT5XIy8K9
+
+  # XXX: hardcoded path
+  if test -x ~/derivative-maker/help-steps/unmount-helper ; then
+    umount_tool=~/derivative-maker/help-steps/unmount-helper
+  else
+    umount_tool=umount
+  fi
 
   if test -n "${MNTPOINT}"; then
-    umount "${MNTPOINT}/boot/efi"
-    umount "${MNTPOINT}"
+    $umount_tool "${MNTPOINT}/boot/efi"
+    $umount_tool "${MNTPOINT}"
   fi
   if test -n "${ROOTFS_TARGET}"; then
     kpartx -d "${ROOTFS_TARGET}"
   fi
   if test -n "${MNTPOINT}"; then
-    rmdir "${MNTPOINT}"
+    $umount_tool "${MNTPOINT}"
   fi
 }
 
