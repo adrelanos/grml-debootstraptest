@@ -72,8 +72,14 @@ prepare_loopback_info() {
   LOOP_PART="${DEVINFO##add map }"
   LOOP_PART="${LOOP_PART// */}"
   EFI_TARGET="/dev/mapper/$LOOP_PART"
+  # example: EFI_TARGET
+  # /dev/mapper/loop1p1
+
   LOOP_PART="${LOOP_PART%p1}p3"
   ROOTFS_TARGET="/dev/mapper/${LOOP_PART}"
+  # example ROOTFS_TARGET:
+  # /dev/mapper/loop1p3
+
   MNTPOINT=$(mktemp -d)
 }
 
