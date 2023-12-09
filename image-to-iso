@@ -17,8 +17,6 @@
 #   see corresponding createimg1 script.
 # - Makes some assumptions about the partition layout.
 
-# TODO: Consider porting to squashfs-tools-ng for potential improvements in speed and size reduction.
-
 # Enable debugging, exit on error, and fail on pipe errors.
 set -x
 set -e
@@ -106,6 +104,8 @@ create_squashfs() {
   ##
   ## During development, especially when testing various kernel boot parameters, it may be
   ## unnecessary to repeatedly recreate the squashfs file.
+  ##
+  ## TODO: Consider porting to squashfs-tools-ng for potential improvements in speed and size reduction.
   mksquashfs "${MNTPOINT}" "${ISO_TMP_DIR}/LiveOS/squashfs.img" -noappend
 }
 
