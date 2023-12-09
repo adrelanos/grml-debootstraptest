@@ -87,7 +87,9 @@ create_iso_directories() {
   # Clear and create necessary directories in the temporary ISO directory.
   rm -r -f "${ISO_TMP_DIR}"
   mkdir --parents "${ISO_TMP_DIR}/LiveOS"
-  mkdir --parents "${ISO_TMP_DIR}/boot/grub"
+
+  ## Old implementation only creating grub.cfg.
+  #mkdir --parents "${ISO_TMP_DIR}/boot/grub"
 }
 
 get_file_names() {
