@@ -11,6 +11,11 @@
 # The script is designed to support both booting methods:
 # - EFI (Unified Extensible Firmware Interface) and,
 # - legacy BIOS booting.
+#
+# Limitations:
+# - Only tested with images creates by grml-debootstrap --vmfile --vmefi,
+#   see corresponding createimg1 script.
+# - Makes some assumptions about the partition layout.
 
 # TODO: Consider porting to squashfs-tools-ng for potential improvements in speed and size reduction.
 
@@ -38,7 +43,8 @@ check_root() {
 }
 
 check_dependencies() {
-  # Ensure necessary commands are available.
+  true "Ensure necessary commands are available..."
+
   test -x ./grub-raw-cfg-to-grub-iso-cfg
   command -v mksquashfs >/dev/null
   command -v grub-mkrescue >/dev/null
@@ -51,8 +57,7 @@ check_dependencies() {
 }
 
 setup_image_mount() {
-  # Mount the image file and set up loopback device.
-  true "Mounting..."
+  true "Mount the image file and set up loopback device..."
   DEVINFO=$(kpartx -asv "$RAW_IMAGE_FILE")
   if [ -z "${DEVINFO}" ] ; then
     echo "Error setting up loopback device." >&2
@@ -61,7 +66,7 @@ setup_image_mount() {
 }
 
 prepare_loopback_info() {
-  # Extract and prepare loopback device information.
+  true "Extract and prepare loopback device information..."
   LOOP_PART="${DEVINFO##add map }"
   LOOP_PART="${LOOP_PART// */}"
   EFI_TARGET="/dev/mapper/$LOOP_PART"
@@ -71,7 +76,7 @@ prepare_loopback_info() {
 }
 
 mount_file_systems() {
-  # Mount the target file system and EFI partition.
+  true "Mount the target file system and EFI partition..."
   mount "$TARGET" "$MNTPOINT"
   mount "$EFI_TARGET" "${MNTPOINT}/boot/efi"
 }
@@ -84,7 +89,7 @@ create_iso_directories() {
 }
 
 get_file_names() {
-  # Retrieve the kernel version from the mounted image.
+  true "Retrieve the kernel version from the mounted image..."
   KVERSION=$(cd "$MNTPOINT/boot" && find vmlinuz-* | tail -1 | sed 's@vmlinuz-@@')
 
   # Define paths for the kernel file and initial ramdisk.
@@ -105,15 +110,14 @@ create_squashfs() {
 }
 
 copy_kernel_and_initial_ramdisk_and_grub_config() {
-  # Copy kernel and initial ramdisk to the temporary ISO directory.
+  true "Copy kernel and initial ramdisk to the temporary ISO directory..."
   cp -a "${MNTPOINT}/boot/${kernel_file_name}" "${ISO_TMP_DIR}/boot/${kernel_file_name}"
   cp -a "${MNTPOINT}/boot/${initial_ramdisk_file_name}" "${ISO_TMP_DIR}/boot/${initial_ramdisk_file_name}"
   cp -a "${MNTPOINT}/boot/grub/grub.cfg" "${ISO_TMP_DIR}/boot/grub-raw-image-temp.cfg"
 }
 
 unmount_cleanup() {
-  # Unmount partitions and clean up loopback device.
-  true "Unmounting..."
+  true "Unmount partitions and clean up loopback device..."
   umount "${MNTPOINT}/boot/efi"
   umount "${MNTPOINT}"
   kpartx -d "${TARGET}"
@@ -121,8 +125,8 @@ unmount_cleanup() {
 }
 
 grub_raw_image_config_to_grub_iso_image_config() {
-  # Prepare the ISO file by creating a GRUB configuration file.
-  #
+  true "Create the GRUB configuration file for the ISO."
+
   # Notes:
   # - The /boot folder originates from the temporary ISO directory.
   #   It will only be available during very early boot.
@@ -132,7 +136,6 @@ grub_raw_image_config_to_grub_iso_image_config() {
   #   it might be possible to omit adding the /boot folder from squashfs.img.
   # - This might be confusing, but makes it easier to generate a
   #   /boot/grub/grub.cfg file based on the VM image.
-  true "Preparing ISO..."
 
   ## Was functional.
   ##
@@ -160,18 +163,17 @@ grub_raw_image_config_to_grub_iso_image_config() {
 }
 
 create_iso() {
-  # Create the ISO using grub-mkrescue based on the temporary ISO directory.
-  #
+  true "Create the ISO using grub-mkrescue based on the temporary ISO directory..."
+
   # '-V test' set label to 'test'. This must match the 'root=live:CDLABEL=test' kernel command line.
   true "Creating ISO..."
   grub-mkrescue --verbose -V test -o "$ISO_IMAGE_FILE" "$ISO_TMP_DIR"
 }
 
 cleanup() {
-  # Cleanup temporary files (uncomment to enable).
+  true "Cleanup temporary files..."
   # Not deleting for easier debugging.
   #rm -r "$ISO_TMP_DIR"
-  true "Ok"
 }
 
 main() {
