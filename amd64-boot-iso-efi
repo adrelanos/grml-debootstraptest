@@ -12,7 +12,7 @@ set -e
 ## -nographic \
 
 #OVMF_CODE="/usr/share/OVMF/OVMF_CODE_4M.ms.fd"
-OVMF_CODE="/usr/share/OVMF/OVMF.fd"
+OVMF_CODE="/usr/share/OVMF/OVMF_CODE.fd"
 OVMF_VARS_ORIG="/usr/share/OVMF/OVMF_VARS_4M.ms.fd"
 OVMF_VARS=~/grml-debootstraptestbin/efi-bios-vars.fd
 

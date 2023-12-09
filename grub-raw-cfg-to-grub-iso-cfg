@@ -4,6 +4,10 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
+# TODO: remove
+### BEGIN /etc/grub.d/10_linux_live ###
+### END /etc/grub.d/10_linux_live ###
+
 import sys
 
 def process_grub_line(input_line, extra_params):
