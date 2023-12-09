@@ -58,7 +58,7 @@ check_dependencies() {
 
 setup_image_mount() {
   true "Mount the image file and set up loopback device..."
-  DEVINFO=$(kpartx -asv "$RAW_IMAGE_FILE")
+  DEVINFO=$(kpartx -asv "${RAW_IMAGE_FILE}")
   if [ -z "${DEVINFO}" ] ; then
     echo "Error setting up loopback device." >&2
     exit 1
@@ -71,26 +71,26 @@ prepare_loopback_info() {
   LOOP_PART="${LOOP_PART// */}"
   EFI_TARGET="/dev/mapper/$LOOP_PART"
   LOOP_PART="${LOOP_PART%p1}p3"
-  TARGET="/dev/mapper/$LOOP_PART"
+  TARGET="/dev/mapper/${LOOP_PART}"
   MNTPOINT=$(mktemp -d)
 }
 
 mount_file_systems() {
   true "Mount the target file system and EFI partition..."
-  mount "$TARGET" "$MNTPOINT"
-  mount "$EFI_TARGET" "${MNTPOINT}/boot/efi"
+  mount "${TARGET}" "${MNTPOINT}"
+  mount "${EFI_TARGET}" "${MNTPOINT}/boot/efi"
 }
 
 create_iso_directories() {
   # Clear and create necessary directories in the temporary ISO directory.
-  rm -r -f "$ISO_TMP_DIR"
+  rm -r -f "${ISO_TMP_DIR}"
   mkdir --parents "${ISO_TMP_DIR}/LiveOS"
   mkdir --parents "${ISO_TMP_DIR}/boot/grub"
 }
 
 get_file_names() {
   true "Retrieve the kernel version from the mounted image..."
-  KVERSION=$(cd "$MNTPOINT/boot" && find vmlinuz-* | tail -1 | sed 's@vmlinuz-@@')
+  KVERSION=$(cd "${MNTPOINT}/boot" && find vmlinuz-* | tail -1 | sed 's@vmlinuz-@@')
 
   # Define paths for the kernel file and initial ramdisk.
   kernel_file_name="vmlinuz-${KVERSION}"
@@ -159,7 +159,7 @@ grub_raw_image_config_to_grub_iso_image_config() {
   # Convert grub.cfg from raw image to grub.cfg usable for ISO image.
   #
   # Keep original grub-raw-image-temp.cfg for later comparison purposes.
-  ./grub-raw-cfg-to-grub-iso-cfg "${ISO_TMP_DIR}/boot/grub-raw-image-temp.cfg" "${ISO_TMP_DIR}/boot/grub/grub.cfg" "$iso_grub_extra_params"
+  ./grub-raw-cfg-to-grub-iso-cfg "${ISO_TMP_DIR}/boot/grub-raw-image-temp.cfg" "${ISO_TMP_DIR}/boot/grub/grub.cfg" "${iso_grub_extra_params}"
 }
 
 create_iso() {
@@ -167,13 +167,13 @@ create_iso() {
 
   # '-V test' set label to 'test'. This must match the 'root=live:CDLABEL=test' kernel command line.
   true "Creating ISO..."
-  grub-mkrescue --verbose -V test -o "$ISO_IMAGE_FILE" "$ISO_TMP_DIR"
+  grub-mkrescue --verbose -V test -o "${ISO_IMAGE_FILE}" "${ISO_TMP_DIR}"
 }
 
 cleanup() {
   true "Cleanup temporary files..."
   # Not deleting for easier debugging.
-  #rm -r "$ISO_TMP_DIR"
+  #rm -r "${ISO_TMP_DIR}"
 }
 
 main() {
