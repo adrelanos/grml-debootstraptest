@@ -13,9 +13,16 @@
 # - legacy BIOS booting.
 #
 # Limitations:
+# - Only tested with Debian.
 # - Only tested with images creates by grml-debootstrap --vmfile --vmefi,
 #   see corresponding createimg1 script.
 # - Makes some assumptions about the partition layout.
+#   First partition needs to be the EFI partition.
+#   Second partition needs to exist but is ignored (bios_grub).
+#   Third partition needs to be the root file system.
+# - Encrypted raw images are unsupported but that point is a bit moot,
+#   because to the knowledge of the author there are no raw image creation
+#   tools for Debian that can create encrypted raw images.
 
 # Enable debugging, exit on error, and fail on pipe errors.
 set -x
@@ -169,8 +176,8 @@ unmount_cleanup() {
     $umount_tool "${MNTPOINT}/boot/efi"
     $umount_tool "${MNTPOINT}"
   fi
-  if test -n "${ROOTFS_TARGET}"; then
-    kpartx -d "${ROOTFS_TARGET}"
+  if test -n "${RAW_IMAGE_FILE}"; then
+    kpartx -d "${RAW_IMAGE_FILE}"
   fi
   if test -n "${MNTPOINT}"; then
     $umount_tool "${MNTPOINT}"
