@@ -61,6 +61,11 @@ check_dependencies() {
 setup_image_mount() {
   true "Mount the image file and set up loopback device..."
   DEVINFO=$(kpartx -asv "${RAW_IMAGE_FILE}")
+  # example DEVINFO:
+  # add map loop1p1 (253:3): 0 204800 linear 7:1 2048
+  # add map loop1p2 (253:4): 0 2048 linear 7:1 206848
+  # add map loop1p3 (253:5): 0 209504256 linear 7:1 208896
+
   if [ -z "${DEVINFO}" ] ; then
     echo "Error setting up loopback device." >&2
     exit 1
