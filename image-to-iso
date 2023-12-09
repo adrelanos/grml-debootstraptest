@@ -152,6 +152,7 @@ copy_kernel_and_initial_ramdisk_and_grub_config() {
   #cp -a "${MNTPOINT}/boot/${kernel_file_name}" "${ISO_TMP_DIR}/boot/${kernel_file_name}"
   #cp -a "${MNTPOINT}/boot/${initial_ramdisk_file_name}" "${ISO_TMP_DIR}/boot/${initial_ramdisk_file_name}"
 
+  ## TODO: Or if using grub-mkrescue there is no need to copy the /boot folder?
   cp -a -r "${MNTPOINT}/boot" "${ISO_TMP_DIR}/boot"
 
   ## Create a copy of the grub.cfg from the raw image as a template for later
@@ -213,14 +214,26 @@ grub_raw_image_config_to_grub_iso_image_config() {
   iso_grub_extra_params+=" root=live:CDLABEL=test"
   iso_grub_extra_params+=" rd.live.image"
   iso_grub_extra_params+=" rd.live.overlay.overlayfs=1"
+
+  # Debugging dracut.
   iso_grub_extra_params+=" rd.debug"
   iso_grub_extra_params+=" rd.live.debug"
-  iso_grub_extra_params+=" console=ttyS0"
+
+  # console=ttyS0: Show output when booting with qemu with -nographic.
+  # console=tty0: Keep normal console output enabled.
+  iso_grub_extra_params+=" console=tty0 console=ttyS0,115200n8"
 
   # Convert grub.cfg from raw image to grub.cfg usable for ISO image.
   #
   # Keep original grub-raw-image-temp.cfg for later comparison purposes.
   ./grub-raw-cfg-to-grub-iso-cfg "${ISO_TMP_DIR}/boot/grub/grub-raw-image-temp.cfg" "${ISO_TMP_DIR}/boot/grub/grub.cfg" "${iso_grub_extra_params}"
+
+  ## Debian Live ISO has no file /EFI/boot/grub.cfg
+  ## /boot/efi folder in raw image has grub.cfg:
+  # search.fs_uuid 26ada0c0-1165-4098-884d-aafd2220c2c6 root
+  # set prefix=($root)'/boot/grub'
+  # configfile $prefix/grub.cfg
+  ## This might cause issues because wrong UUID.
 }
 
 create_iso() {
@@ -228,6 +241,7 @@ create_iso() {
 
   # '-V test' set label to 'test'. This must match the 'root=live:CDLABEL=test' kernel command line.
   true "Creating ISO..."
+  ## TODO: do not copy xen
   grub-mkrescue --verbose -V test -o "${ISO_IMAGE_FILE}" "${ISO_TMP_DIR}"
 }
 

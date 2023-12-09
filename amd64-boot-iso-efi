@@ -9,9 +9,28 @@ set -e
 
 ## sudo apt install --no-install-recommends ovmf
 
+## -nographic \
+
+#OVMF_CODE="/usr/share/OVMF/OVMF_CODE_4M.ms.fd"
+OVMF_CODE="/usr/share/OVMF/OVMF.fd"
+OVMF_VARS_ORIG="/usr/share/OVMF/OVMF_VARS_4M.ms.fd"
+OVMF_VARS=~/grml-debootstraptestbin/efi-bios-vars.fd
+
+if [ ! -e "${OVMF_VARS}" ]; then
+  cp "${OVMF_VARS_ORIG}" "${OVMF_VARS}"
+fi
+
 qemu-system-x86_64 \
-    -nographic \
-    -bios /usr/share/ovmf/OVMF.fd \
-    -m 1024 \
-    -boot d \
-    -cdrom ~/grml-debootstraptestbin/output.iso
+  -name test \
+  -m 1024 \
+  -object rng-random,filename=/dev/random,id=rng0 \
+  -device virtio-rng-pci,rng=rng0 \
+  -vga virtio \
+  -machine q35,smm=on \
+  -global driver=cfi.pflash01,property=secure,value=on \
+  -drive if=pflash,format=raw,unit=0,file="${OVMF_CODE}",readonly=on \
+  -drive if=pflash,format=raw,unit=1,file="${OVMF_VARS}" \
+  -net none \
+  -boot d \
+  -cdrom ~/grml-debootstraptestbin/output.iso
+  "$@"
