@@ -149,11 +149,11 @@ copy_kernel_and_initial_ramdisk_and_grub_config() {
   ## Was functional.
   ## But lacks the real grub folder which contains grub modules.
   ## Hence replaced with the full grub folder.
-  #cp -a "${MNTPOINT}/boot/${kernel_file_name}" "${ISO_TMP_DIR}/boot/${kernel_file_name}"
-  #cp -a "${MNTPOINT}/boot/${initial_ramdisk_file_name}" "${ISO_TMP_DIR}/boot/${initial_ramdisk_file_name}"
+  cp -a "${MNTPOINT}/boot/${kernel_file_name}" "${ISO_TMP_DIR}/boot/${kernel_file_name}"
+  cp -a "${MNTPOINT}/boot/${initial_ramdisk_file_name}" "${ISO_TMP_DIR}/boot/${initial_ramdisk_file_name}"
 
   ## TODO: Or if using grub-mkrescue there is no need to copy the /boot folder?
-  cp -a -r "${MNTPOINT}/boot" "${ISO_TMP_DIR}/boot"
+  #cp -a -r "${MNTPOINT}/boot" "${ISO_TMP_DIR}/boot"
 
   ## Create a copy of the grub.cfg from the raw image as a template for later
   ## adjustment to be functional for the ISO.
