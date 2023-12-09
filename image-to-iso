@@ -168,7 +168,7 @@ unmount_cleanup() {
   #~/derivative-maker/help-steps/unmount-helper -- /tmp/user/0/tmp.6UT5XIy8K9
 
   # XXX: hardcoded path
-  if test -x ~/derivative-maker/help-steps/unmount-helper ; then
+  if test -x /home/$SUDO_USER/derivative-maker/help-steps/unmount-helper ; then
     umount_tool="/home/$SUDO_USER/derivative-maker/help-steps/unmount-helper"
   else
     umount_tool=umount
@@ -179,7 +179,7 @@ unmount_cleanup() {
     $umount_tool "${MNTPOINT}"
   fi
   if test -n "${RAW_IMAGE_FILE}"; then
-    kpartx -d "${RAW_IMAGE_FILE}"
+    kpartx -d -v "${RAW_IMAGE_FILE}"
   fi
   if test -n "${MNTPOINT}"; then
     rmdir "${MNTPOINT}"
