@@ -111,8 +111,17 @@ create_squashfs() {
 
 copy_kernel_and_initial_ramdisk_and_grub_config() {
   true "Copy kernel and initial ramdisk to the temporary ISO directory..."
-  cp -a "${MNTPOINT}/boot/${kernel_file_name}" "${ISO_TMP_DIR}/boot/${kernel_file_name}"
-  cp -a "${MNTPOINT}/boot/${initial_ramdisk_file_name}" "${ISO_TMP_DIR}/boot/${initial_ramdisk_file_name}"
+
+  ## Was functional.
+  ## But lacks the real grub folder which contains grub modules.
+  ## Hence replaced with the full grub folder.
+  #cp -a "${MNTPOINT}/boot/${kernel_file_name}" "${ISO_TMP_DIR}/boot/${kernel_file_name}"
+  #cp -a "${MNTPOINT}/boot/${initial_ramdisk_file_name}" "${ISO_TMP_DIR}/boot/${initial_ramdisk_file_name}"
+
+  cp -a -r "${MNTPOINT}/boot" "${ISO_TMP_DIR}/boot"
+
+  ## Create a copy of the grub.cfg from the raw image as a template for later
+  ## adjustment to be functional for the ISO.
   cp -a "${MNTPOINT}/boot/grub/grub.cfg" "${ISO_TMP_DIR}/boot/grub/grub-raw-image-temp.cfg"
 }
 
@@ -138,7 +147,8 @@ grub_raw_image_config_to_grub_iso_image_config() {
   #   /boot/grub/grub.cfg file based on the VM image.
 
   ## Was functional.
-  ##
+  ## Replaced with a more complex implementation below for the ISO to inherit
+  ## same grub.cfg from the raw image but adjusted to work with the ISO.
   # cat << EOF > "${ISO_TMP_DIR}/boot/grub/grub.cfg"
   # set default="0"
   # set timeout=10
