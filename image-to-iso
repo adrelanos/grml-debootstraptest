@@ -22,6 +22,16 @@ set -x
 set -e
 set -o pipefail
 
+error_handler() {
+  if test -n "${BASH_COMMAND:-}"; then
+    # shellcheck disable=SC2039,3028,3054
+    true "ERROR: Executed script, function, command executed: '${0}' '${FUNCNAME[1]}' '${BASH_COMMAND}'"
+  else
+    true "ERROR: Executed script: '${0}'"
+  fi
+  unmount_cleanup || true "ERROR: Cleanup unmounting failed." >&2
+}
+
 parse_arguments() {
   if [ $# -lt 3 ]; then
     echo "Usage: $0 <raw_image_file> <iso_tmp_dir> <iso_image_file>" >&2
@@ -144,11 +154,19 @@ copy_kernel_and_initial_ramdisk_and_grub_config() {
 
 unmount_cleanup() {
   true "Unmount partitions and clean up loopback device..."
+
   ## TODO: use derivative-maker help-steps/unmount-helper
-  umount "${MNTPOINT}/boot/efi"
-  umount "${MNTPOINT}"
-  kpartx -d "${ROOTFS_TARGET}"
-  rmdir "${MNTPOINT}"
+
+  if test -n "${MNTPOINT}"; then
+    umount "${MNTPOINT}/boot/efi"
+    umount "${MNTPOINT}"
+  fi
+  if test -n "${ROOTFS_TARGET}"; then
+    kpartx -d "${ROOTFS_TARGET}"
+  fi
+  if test -n "${MNTPOINT}"; then
+    rmdir "${MNTPOINT}"
+  fi
 }
 
 grub_raw_image_config_to_grub_iso_image_config() {
@@ -198,7 +216,7 @@ create_iso() {
   grub-mkrescue --verbose -V test -o "${ISO_IMAGE_FILE}" "${ISO_TMP_DIR}"
 }
 
-cleanup() {
+cleanup_temporary_files() {
   true "Cleanup temporary files..."
   # Not deleting for easier debugging.
   #rm -r "${ISO_TMP_DIR}"
@@ -218,8 +236,11 @@ main() {
   unmount_cleanup
   grub_raw_image_config_to_grub_iso_image_config
   create_iso
-  cleanup
+  cleanup_temporary_files
   true "Done."
 }
+
+# shellcheck disable=SC2039,3047
+trap 'error_handler $? ${LINENO:-}' ERR
 
 main "$@"
