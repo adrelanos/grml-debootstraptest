@@ -107,8 +107,8 @@ prepare_loopback_info() {
 
 mount_file_systems() {
   true "Mount the target file system and EFI partition..."
-  mount "${ROOTFS_TARGET}" "${MNTPOINT}"
-  mount "${EFI_TARGET}" "${MNTPOINT}/boot/efi"
+  mount --options=ro "${ROOTFS_TARGET}" "${MNTPOINT}"
+  mount --options=ro "${EFI_TARGET}" "${MNTPOINT}/boot/efi"
 }
 
 create_iso_directories() {
@@ -167,7 +167,7 @@ unmount_cleanup() {
 
   # XXX: hardcoded path
   if test -x ~/derivative-maker/help-steps/unmount-helper ; then
-    umount_tool=~/derivative-maker/help-steps/unmount-helper
+    umount_tool="/home/$SUDO_USER/derivative-maker/help-steps/unmount-helper"
   else
     umount_tool=umount
   fi
@@ -180,7 +180,7 @@ unmount_cleanup() {
     kpartx -d "${RAW_IMAGE_FILE}"
   fi
   if test -n "${MNTPOINT}"; then
-    $umount_tool "${MNTPOINT}"
+    rmdir "${MNTPOINT}"
   fi
 }
 
