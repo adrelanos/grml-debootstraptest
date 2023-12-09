@@ -113,7 +113,7 @@ copy_kernel_and_initial_ramdisk_and_grub_config() {
   true "Copy kernel and initial ramdisk to the temporary ISO directory..."
   cp -a "${MNTPOINT}/boot/${kernel_file_name}" "${ISO_TMP_DIR}/boot/${kernel_file_name}"
   cp -a "${MNTPOINT}/boot/${initial_ramdisk_file_name}" "${ISO_TMP_DIR}/boot/${initial_ramdisk_file_name}"
-  cp -a "${MNTPOINT}/boot/grub/grub.cfg" "${ISO_TMP_DIR}/boot/grub-raw-image-temp.cfg"
+  cp -a "${MNTPOINT}/boot/grub/grub.cfg" "${ISO_TMP_DIR}/boot/grub/grub-raw-image-temp.cfg"
 }
 
 unmount_cleanup() {
@@ -159,7 +159,7 @@ grub_raw_image_config_to_grub_iso_image_config() {
   # Convert grub.cfg from raw image to grub.cfg usable for ISO image.
   #
   # Keep original grub-raw-image-temp.cfg for later comparison purposes.
-  ./grub-raw-cfg-to-grub-iso-cfg "${ISO_TMP_DIR}/boot/grub-raw-image-temp.cfg" "${ISO_TMP_DIR}/boot/grub/grub.cfg" "${iso_grub_extra_params}"
+  ./grub-raw-cfg-to-grub-iso-cfg "${ISO_TMP_DIR}/boot/grub/grub-raw-image-temp.cfg" "${ISO_TMP_DIR}/boot/grub/grub.cfg" "${iso_grub_extra_params}"
 }
 
 create_iso() {
