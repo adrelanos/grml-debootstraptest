@@ -250,6 +250,9 @@ create_iso() {
   ## predictable and not depending on the host operating system configuration.
   ## Also wastes a bit disk space.
   grub-mkrescue --verbose -V test -o "${ISO_IMAGE_FILE}" "${ISO_TMP_DIR}"
+
+  # Fix permissions.
+  chown "${SUDO_USER}:${SUDO_USER}" "${ISO_IMAGE_FILE}"
 }
 
 cleanup_temporary_files() {
