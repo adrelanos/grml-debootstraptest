@@ -71,13 +71,13 @@ prepare_loopback_info() {
   LOOP_PART="${LOOP_PART// */}"
   EFI_TARGET="/dev/mapper/$LOOP_PART"
   LOOP_PART="${LOOP_PART%p1}p3"
-  TARGET="/dev/mapper/${LOOP_PART}"
+  ROOTFS_TARGET="/dev/mapper/${LOOP_PART}"
   MNTPOINT=$(mktemp -d)
 }
 
 mount_file_systems() {
   true "Mount the target file system and EFI partition..."
-  mount "${TARGET}" "${MNTPOINT}"
+  mount "${ROOTFS_TARGET}" "${MNTPOINT}"
   mount "${EFI_TARGET}" "${MNTPOINT}/boot/efi"
 }
 
@@ -120,7 +120,7 @@ unmount_cleanup() {
   true "Unmount partitions and clean up loopback device..."
   umount "${MNTPOINT}/boot/efi"
   umount "${MNTPOINT}"
-  kpartx -d "${TARGET}"
+  kpartx -d "${ROOTFS_TARGET}"
   rmdir "${MNTPOINT}"
 }
 
