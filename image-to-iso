@@ -115,9 +115,6 @@ create_iso_directories() {
   # Clear and create necessary directories in the temporary ISO directory.
   rm -r -f "${ISO_TMP_DIR}"
   mkdir --parents "${ISO_TMP_DIR}/LiveOS"
-
-  ## Old implementation only creating grub.cfg.
-  #mkdir --parents "${ISO_TMP_DIR}/boot/grub"
 }
 
 get_file_names() {
@@ -134,6 +131,9 @@ create_squashfs() {
   ## Take the contents of the VM image and create the squashfs.img file in the LiveOS folder
   ## within the temporary ISO directory.
   ##
+  ## The kernel and initial ramdisk is not needed inside the squashfs.img.
+  ## These will later be copied in the ISO's /boot folder in a later function.
+  ##
   ## The /LiveOS/squashfs.img path is a default setting used by dracut.
   ##
   ## During development, especially when testing various kernel boot parameters, it may be
@@ -149,6 +149,7 @@ copy_kernel_and_initial_ramdisk_and_grub_config() {
   ## Was functional.
   ## But lacks the real grub folder which contains grub modules.
   ## Hence replaced with the full grub folder.
+  mkdir --parents "${ISO_TMP_DIR}/boot/grub"
   cp -a "${MNTPOINT}/boot/${kernel_file_name}" "${ISO_TMP_DIR}/boot/${kernel_file_name}"
   cp -a "${MNTPOINT}/boot/${initial_ramdisk_file_name}" "${ISO_TMP_DIR}/boot/${initial_ramdisk_file_name}"
 
@@ -242,6 +243,11 @@ create_iso() {
   # '-V test' set label to 'test'. This must match the 'root=live:CDLABEL=test' kernel command line.
   true "Creating ISO..."
   ## TODO: do not copy xen
+  ## "grub-mkrescue will automatically include every platform it finds." [1]
+  ## [1] https://lists.gnu.org/archive/html/grub-devel/2014-03/msg00009.html
+  ## This is an issue for reproducible builds because files copied need to be
+  ## predictable and not depending on the host operating system configuration.
+  ## Also wastes a bit disk space.
   grub-mkrescue --verbose -V test -o "${ISO_IMAGE_FILE}" "${ISO_TMP_DIR}"
 }
 
