@@ -11,29 +11,35 @@
 import sys
 
 def process_grub_line(input_line, extra_params):
+    leading_whitespace = input_line[:len(input_line) - len(input_line.lstrip())]
+    comment = ""
     if 'search --no-floppy --fs-uuid --set=root' in input_line:
         return None  # Skip the line
 
     line_starts = ('linux', 'module2')
     for line_start in line_starts:
         if input_line.lstrip().startswith(line_start):
-            # Preserve the original whitespace before 'linux' or 'module2' and between it and the rest of the line
             parts = input_line.split(line_start)
             pre_command_whitespace = parts[0]
             post_command_whitespace = parts[1][:len(parts[1]) - len(parts[1].lstrip())]
 
-            # Remove root=UUID, 'ro', 'quiet' and append extra kernel parameters
             remaining_parts = parts[1].lstrip().split()
             excluded_startswith = ['root=UUID']
             excluded_exact = ['ro', 'quiet', 'rhgb']
 
             filtered_parts = []
+            removed_parts = []
             for part in remaining_parts:
-                if not any(part.startswith(excluded) for excluded in excluded_startswith) and part not in excluded_exact:
+                if any(part.startswith(excluded) for excluded in excluded_startswith) or part in excluded_exact:
+                    removed_parts.append(part)
+                else:
                     filtered_parts.append(part)
 
+            if removed_parts:
+                comment = leading_whitespace + "# Removed options: " + ' '.join(removed_parts) + '\n'
+
             remaining_parts = filtered_parts
-            processed_line = pre_command_whitespace + line_start + post_command_whitespace + ' '.join(remaining_parts) + ' ' + ' '.join(extra_params) + '\n'
+            processed_line = comment + pre_command_whitespace + line_start + post_command_whitespace + ' '.join(remaining_parts) + ' ' + ' '.join(extra_params) + '\n'
 
             return processed_line
 
