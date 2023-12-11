@@ -7,7 +7,7 @@ def process_grub_line(input_line, extra_params, in_custom_section):
     comment = ""
 
     if 'search --no-floppy --fs-uuid --set=root' in input_line:
-        return None, in_custom_section  # Skip the line
+        return leading_whitespace + '# ' + input_line.lstrip(), in_custom_section
 
     if in_custom_section:
         # Skip adding a comment for empty lines
