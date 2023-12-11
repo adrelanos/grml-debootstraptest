@@ -207,13 +207,13 @@ grub_raw_image_config_to_grub_iso_image_config() {
   # set default="0"
   # set timeout=10
   # menuentry "Linux" {
-  #     linux /boot/${kernel_file_name} root=live:CDLABEL=test rd.live.image rd.debug rd.live.debug rd.live.overlay.overlayfs=1 console=ttyS0
+  #     linux /boot/${kernel_file_name} root=live:CDLABEL=cdlabel rd.live.image rd.debug rd.live.debug rd.live.overlay.overlayfs=1 console=ttyS0
   #     initrd /boot/${initial_ramdisk_file_name}
   # }
   # EOF
 
   iso_grub_extra_params=""
-  iso_grub_extra_params+=" root=live:CDLABEL=test"
+  iso_grub_extra_params+=" root=live:CDLABEL=cdlabel"
   iso_grub_extra_params+=" rd.live.image"
   iso_grub_extra_params+=" rd.live.overlay.overlayfs=1"
 
@@ -241,7 +241,7 @@ grub_raw_image_config_to_grub_iso_image_config() {
 create_iso() {
   true "Create the ISO using grub-mkrescue based on the temporary ISO directory..."
 
-  # '-V test' set label to 'test'. This must match the 'root=live:CDLABEL=test' kernel command line.
+  # '-V cdlabel' set label to 'cdlabel'. This must match the 'root=live:CDLABEL=cdlabel' kernel command line.
   true "Creating ISO..."
   ## TODO: do not copy xen
   ## "grub-mkrescue will automatically include every platform it finds." [1]
@@ -253,8 +253,8 @@ create_iso() {
   ## During development also useful to edit file:
   ## ~/grml-debootstraptestbin/iso_tmp/boot/grub/grub.cfg
   ## and then:
-  ## sudo grub-mkrescue --verbose -V test -o ~/grml-debootstraptestbin/output.iso ~/grml-debootstraptestbin/iso_tmp
-  grub-mkrescue --verbose -V test -o "${ISO_IMAGE_FILE}" "${ISO_TMP_DIR}"
+  ## sudo grub-mkrescue --verbose -V cdlabel -o ~/grml-debootstraptestbin/output.iso ~/grml-debootstraptestbin/iso_tmp
+  grub-mkrescue --verbose -V cdlabel -o "${ISO_IMAGE_FILE}" "${ISO_TMP_DIR}"
 
   # Fix permissions.
   chown "${SUDO_USER}:${SUDO_USER}" "${ISO_IMAGE_FILE}"

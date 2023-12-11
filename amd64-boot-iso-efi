@@ -11,6 +11,8 @@ set -e
 
 ## If not installing qemu-system-x86, need to use
 ## -nographic \
+## To avoid duplicate output from qemu which mixes console and serial output from grub:
+## -chardev serial,id=idforserial,path=/dev/null \
 
 #OVMF_CODE="/usr/share/OVMF/OVMF_CODE_4M.ms.fd"
 OVMF_CODE="/usr/share/OVMF/OVMF_CODE.fd"
