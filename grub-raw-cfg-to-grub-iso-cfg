@@ -1,9 +1,14 @@
 #!/usr/bin/python3 -u
 
 import sys
+import re
 
 def process_grub_line(input_line, extra_params, in_custom_section):
     leading_whitespace = input_line[:len(input_line) - len(input_line.lstrip())]
+
+    if input_line.strip().startswith('menuentry'):
+        pattern = re.compile(r"'gnulinux-(.+?)'")
+        input_line = re.sub(pattern, "'gnulinux-iso'", input_line)
 
     if 'search --no-floppy --fs-uuid --set=root' in input_line:
         return leading_whitespace + '# ' + input_line.lstrip(), in_custom_section
