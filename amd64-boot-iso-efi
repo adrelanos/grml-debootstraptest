@@ -7,8 +7,9 @@
 set -x
 set -e
 
-## sudo apt install --no-install-recommends ovmf
+## sudo apt install --no-install-recommends qemu-system-x86 qemu-system-gui ovmf
 
+## If not installing qemu-system-x86, need to use
 ## -nographic \
 
 #OVMF_CODE="/usr/share/OVMF/OVMF_CODE_4M.ms.fd"
