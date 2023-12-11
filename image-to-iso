@@ -243,12 +243,14 @@ create_iso() {
 
   ## '-V cdlabel' set label to 'cdlabel'. This must match the 'root=live:CDLABEL=cdlabel' kernel command line.
   ##
-  ## TODO: consistent architecture
+  ## XXX: consistent architectures
   ## "grub-mkrescue will automatically include every platform it finds." [1]
   ## [1] https://lists.gnu.org/archive/html/grub-devel/2014-03/msg00009.html
   ## This is an issue for reproducible builds because files copied need to be
   ## predictable and not depending on the host operating system configuration.
   ## Also wastes a bit disk space.
+  ## For derivative-maker builds this is solved by installing all of these
+  ## packages on the build host.
   ##
   ## During development also useful to edit file:
   ## ~/grml-debootstraptestbin/iso_tmp/boot/grub/grub.cfg
