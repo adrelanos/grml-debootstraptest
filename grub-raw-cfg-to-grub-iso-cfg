@@ -1,20 +1,20 @@
 #!/usr/bin/python3 -u
 
-# SPDX-FileCopyrightText: 2023 - 2023 ENCRYPTED SUPPORT LP <adrelanos@kicksecure.com>
-#
-# SPDX-License-Identifier: AGPL-3.0-or-later
-
-# TODO: remove
-### BEGIN /etc/grub.d/10_linux_live ###
-### END /etc/grub.d/10_linux_live ###
-
 import sys
 
-def process_grub_line(input_line, extra_params):
+def process_grub_line(input_line, extra_params, in_custom_section):
     leading_whitespace = input_line[:len(input_line) - len(input_line.lstrip())]
     comment = ""
+
     if 'search --no-floppy --fs-uuid --set=root' in input_line:
-        return None  # Skip the line
+        return None, in_custom_section  # Skip the line
+
+    if in_custom_section:
+        # Skip adding a comment for empty lines
+        if input_line.strip() == "":
+            return input_line, in_custom_section
+        # Comment out the line preserving the indentation
+        return leading_whitespace + '# ' + input_line.lstrip(), in_custom_section
 
     line_starts = ('linux', 'module2')
     for line_start in line_starts:
@@ -41,17 +41,28 @@ def process_grub_line(input_line, extra_params):
             remaining_parts = filtered_parts
             processed_line = comment + pre_command_whitespace + line_start + post_command_whitespace + ' '.join(remaining_parts) + ' ' + ' '.join(extra_params) + '\n'
 
-            return processed_line
+            return processed_line, in_custom_section
 
-    return input_line  # Return the line unmodified if it doesn't need processing
+    return input_line, in_custom_section  # Return the line unmodified if it doesn't need processing
 
 def process_grub_config(input_file, output_file, extra_params):
+    in_custom_section = False
     try:
         with open(input_file, 'r') as infile, open(output_file, 'w') as outfile:
             for line in infile:
-                processed_line = process_grub_line(line, extra_params)
+                if "### BEGIN /etc/grub.d/11_linux_live ###" in line.strip():
+                    in_custom_section = True
+                    outfile.write(line)
+                    continue
+                elif "### END /etc/grub.d/11_linux_live ###" in line.strip():
+                    in_custom_section = False
+                    outfile.write(line)
+                    continue
+
+                processed_line, in_custom_section = process_grub_line(line, extra_params, in_custom_section)
                 if processed_line is not None:
                     outfile.write(processed_line)
+
     except IOError as e:
         print(f"Error: {e}")
 
