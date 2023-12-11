@@ -14,18 +14,28 @@ def process_grub_line(input_line, extra_params):
     if 'search --no-floppy --fs-uuid --set=root' in input_line:
         return None  # Skip the line
 
-    if input_line.lstrip().startswith('linux'):
-        # Preserve the original whitespace before 'linux' and between 'linux' and the rest of the line
-        parts = input_line.split('linux')
-        pre_linux_whitespace = parts[0]
-        post_linux_whitespace = parts[1][:len(parts[1]) - len(parts[1].lstrip())]
+    line_starts = ('linux', 'module2')
+    for line_start in line_starts:
+        if input_line.lstrip().startswith(line_start):
+            # Preserve the original whitespace before 'linux' or 'module2' and between it and the rest of the line
+            parts = input_line.split(line_start)
+            pre_command_whitespace = parts[0]
+            post_command_whitespace = parts[1][:len(parts[1]) - len(parts[1].lstrip())]
 
-        # Remove root=UUID, 'ro', 'quiet' and append extra kernel parameters
-        remaining_parts = parts[1].lstrip().split()
-        remaining_parts = [part for part in remaining_parts if not part.startswith('root=UUID') and part != 'ro' and part != 'quiet']
-        processed_line = pre_linux_whitespace + 'linux' + post_linux_whitespace + ' '.join(remaining_parts) + ' ' + ' '.join(extra_params) + '\n'
+            # Remove root=UUID, 'ro', 'quiet' and append extra kernel parameters
+            remaining_parts = parts[1].lstrip().split()
+            excluded_startswith = ['root=UUID']
+            excluded_exact = ['ro', 'quiet', 'rhgb']
 
-        return processed_line
+            filtered_parts = []
+            for part in remaining_parts:
+                if not any(part.startswith(excluded) for excluded in excluded_startswith) and part not in excluded_exact:
+                    filtered_parts.append(part)
+
+            remaining_parts = filtered_parts
+            processed_line = pre_command_whitespace + line_start + post_command_whitespace + ' '.join(remaining_parts) + ' ' + ' '.join(extra_params) + '\n'
+
+            return processed_line
 
     return input_line  # Return the line unmodified if it doesn't need processing
 
