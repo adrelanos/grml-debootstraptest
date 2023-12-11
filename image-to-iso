@@ -249,6 +249,11 @@ create_iso() {
   ## This is an issue for reproducible builds because files copied need to be
   ## predictable and not depending on the host operating system configuration.
   ## Also wastes a bit disk space.
+  ##
+  ## During development also useful to edit file:
+  ## ~/grml-debootstraptestbin/iso_tmp/boot/grub/grub.cfg
+  ## and then:
+  ## sudo grub-mkrescue --verbose -V test -o ~/grml-debootstraptestbin/output.iso ~/grml-debootstraptestbin/iso_tmp
   grub-mkrescue --verbose -V test -o "${ISO_IMAGE_FILE}" "${ISO_TMP_DIR}"
 
   # Fix permissions.
