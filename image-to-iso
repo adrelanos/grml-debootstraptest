@@ -18,11 +18,17 @@
 #   see corresponding createimg1 script.
 # - Makes some assumptions about the partition layout.
 #   First partition needs to be the EFI partition.
-#   Second partition needs to exist but is ignored (bios_grub).
-#   Third partition needs to be the root file system.
+#   Last partition needs to be the root file system.
 # - Encrypted raw images are unsupported but that point is a bit moot,
 #   because to the knowledge of the author there are no raw image creation
 #   tools for Debian that can create encrypted raw images.
+# - Certain cross builds are impossible. For example, building an ARM64 ISO
+#   on AMD64 is unsupported. This is because Debian package grub-efi-arm64
+#   is unavailable for AMD64. There is also no package grub-efi-arm64-bin.
+#   The build is possible but an ARM64 ISO built on AMD64 will be unbootable.
+#   This is not a limitation of this script. This is also not possible to do
+#   manually. To work around this, something like an ARM64 build chroot and
+#   QEMU might work.
 
 set -x
 set -e
