@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# SPDX-FileCopyrightText: 2013 - 2023 ENCRYPTED SUPPORT LP <adrelanos@kicksecure.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+set -x
+set -e
+
+## We might get away with --no-install-recommends, fewer packages.
+sudo apt-get install qemu-system-arm qemu-system-aarch64 qemu-efi-aarch64 qemu-utils
+
+## user: user
+## password: changeme
+
+true "WARNING: Untested!"
+
+qemu-system-aarch64 \
+    -nographic \
+    -M virt \
+    -cpu cortex-a57 \
+    -m 1024 \
+    -bios /usr/share/qemu-efi-aarch64/QEMU_EFI.fd \
+    -boot d \
+    -cdrom ~/grml-debootstraptestbin/output.iso
