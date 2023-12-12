@@ -14,9 +14,9 @@ sudo apt-get install qemu-system-arm qemu-system-aarch64 qemu-efi-aarch64 qemu-u
 ## password: changeme
 
 qemu-system-aarch64 \
+    -nographic \
     -M virt \
     -cpu cortex-a57 \
     -m 1024 \
     -bios /usr/share/qemu-efi-aarch64/QEMU_EFI.fd \
-    -drive format=raw,file=/home/user/grml-debootstraptestbin/test.img \
-    -nographic
+    -drive format=raw,file=/home/user/grml-debootstraptestbin/test.img
