@@ -24,10 +24,11 @@
 #   because to the knowledge of the author there are no raw image creation
 #   tools for Debian that can create encrypted raw images.
 
-# Enable debugging, exit on error, and fail on pipe errors.
 set -x
 set -e
 set -o pipefail
+set -o errtrace
+set -o nounset
 
 error_handler() {
   if test -n "${BASH_COMMAND:-}"; then
