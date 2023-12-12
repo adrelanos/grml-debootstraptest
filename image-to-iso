@@ -103,6 +103,9 @@ prepare_loopback_info() {
   # add map loop0p2 (253:1): 0 209692672 linear 7:0 20480
 
   LOOP_PART="${LOOP_PART// */}"
+  # grml-debootstrap --arch arm64 example LOOP_PART:
+  # loop0p1
+
   EFI_TARGET="/dev/mapper/$LOOP_PART"
   # example: EFI_TARGET
   # /dev/mapper/loop1p1
