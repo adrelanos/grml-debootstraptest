@@ -96,22 +96,23 @@ setup_image_mount() {
 
 prepare_loopback_info() {
   true "Extract and prepare loopback device information..."
-  LOOP_PART="${DEVINFO##add map }"
+  local loop_part
 
-  # grml-debootstrap --arch arm64 example LOOP_PART:
-  # loop0p1 (253:0): 0 18432 linear 7:0 2048
-  # add map loop0p2 (253:1): 0 209692672 linear 7:0 20480
-
-  LOOP_PART="${LOOP_PART// */}"
+  # Extract the first partition (EFI)
+  loop_part=$(echo "${DEVINFO}" | head -n 1 | awk '{print $3}')
   # grml-debootstrap --arch arm64 example LOOP_PART:
   # loop0p1
 
-  EFI_TARGET="/dev/mapper/$LOOP_PART"
+  EFI_TARGET="/dev/mapper/${loop_part}"
   # example: EFI_TARGET
   # /dev/mapper/loop1p1
 
-  LOOP_PART="${LOOP_PART%p1}p3"
-  ROOTFS_TARGET="/dev/mapper/${LOOP_PART}"
+  # Extract the last partition (Root FS)
+  loop_part=$(echo "${DEVINFO}" | tail -n 1 | awk '{print $3}')
+  # grml-debootstrap --arch arm64 example LOOP_PART:
+  # loop0p3
+
+  ROOTFS_TARGET="/dev/mapper/${loop_part}"
   # example ROOTFS_TARGET:
   # /dev/mapper/loop1p3
 
