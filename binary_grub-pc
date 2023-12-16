@@ -61,11 +61,11 @@ mkdir -p ${BINARY_FOLDER}/boot/grub/i386-pc
 
 case ${LB_IMAGE_TYPE} in
 	iso|iso-hybrid)
-		FILES="${ISO_TMP_DIR}/usr/lib/grub/i386-pc/*.mod ${ISO_TMP_DIR}/usr/lib/grub/i386-pc/*.lst ${ISO_TMP_DIR}/usr/lib/grub/i386-pc/efiemu??.o ${ISO_TMP_DIR}/usr/share/grub/*.pf2"
+		FILES="${RAW_IMAGE_MNT}/usr/lib/grub/i386-pc/*.mod ${RAW_IMAGE_MNT}/usr/lib/grub/i386-pc/*.lst ${RAW_IMAGE_MNT}/usr/lib/grub/i386-pc/efiemu??.o ${RAW_IMAGE_MNT}/usr/share/grub/*.pf2"
 		;;
 
 	hdd|tar)
-		FILES="${ISO_TMP_DIR}/usr/lib/grub/i386-pc/*"
+		FILES="${RAW_IMAGE_MNT}/usr/lib/grub/i386-pc/*"
 		;;
 esac
 
@@ -99,8 +99,8 @@ EOF
 		true)
 			mv binary.sh chroot
 			Chroot chroot "sh binary.sh"
-			mv ${ISO_TMP_DIR}/grub_eltorito ${BINARY_FOLDER}/boot/grub/grub_eltorito
-			rm -f ${ISO_TMP_DIR}/binary.sh
+			mv ${RAW_IMAGE_MNT}/grub_eltorito ${BINARY_FOLDER}/boot/grub/grub_eltorito
+			rm -f ${RAW_IMAGE_MNT}/binary.sh
 			;;
 
 		false)

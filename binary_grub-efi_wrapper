@@ -30,7 +30,7 @@ no_proxy=""
 LB_BUILD_WITH_CHROOT=false
 LB_UEFI_SECURE_BOOT=enable
 ## set by image-to-iso
-ISO_TMP_DIR="$ISO_TMP_DIR"
+RAW_IMAGE_MNT="$RAW_IMAGE_MNT"
 BINARY_FOLDER="$BINARY_FOLDER"
 
 sh -xveu ./binary_grub-efi

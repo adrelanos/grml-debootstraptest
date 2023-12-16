@@ -159,13 +159,15 @@ prepare_loopback_info() {
   # example ROOTFS_TARGET:
   # /dev/mapper/loop1p3
 
-  MNTPOINT=$(mktemp -d)
+  RAW_IMAGE_MNT=$(mktemp -d)
+  ## read by binary_...
+  export RAW_IMAGE_MNT
 }
 
 mount_file_systems() {
   true "Mount the target file system and EFI partition..."
-  mount --options=ro "${ROOTFS_TARGET}" "${MNTPOINT}"
-  mount --options=ro "${EFI_TARGET}" "${MNTPOINT}/boot/efi"
+  mount "${ROOTFS_TARGET}" "${RAW_IMAGE_MNT}"
+  mount "${EFI_TARGET}" "${RAW_IMAGE_MNT}/boot/efi"
 }
 
 create_iso_directories() {
@@ -176,7 +178,7 @@ create_iso_directories() {
 
 get_file_names() {
   true "Retrieve the kernel version from the mounted image..."
-  KVERSION=$(cd "${MNTPOINT}/boot" && find vmlinuz-* | tail -1 | sed 's@vmlinuz-@@')
+  KVERSION=$(cd "${RAW_IMAGE_MNT}/boot" && find vmlinuz-* | tail -1 | sed 's@vmlinuz-@@')
 
   # Define paths for the kernel file and initial ramdisk.
   kernel_file_name="vmlinuz-${KVERSION}"
@@ -197,7 +199,7 @@ create_squashfs() {
   ## unnecessary to repeatedly recreate the squashfs file.
   ##
   ## TODO: Consider porting to squashfs-tools-ng for potential improvements in speed and size reduction.
-  mksquashfs "${MNTPOINT}" "${ISO_TMP_DIR}/LiveOS/squashfs.img" -noappend
+  mksquashfs "${RAW_IMAGE_MNT}" "${ISO_TMP_DIR}/LiveOS/squashfs.img" -noappend
 }
 
 copy_kernel_and_initial_ramdisk_and_grub_config() {
@@ -205,12 +207,8 @@ copy_kernel_and_initial_ramdisk_and_grub_config() {
 
   ## TODO: multiple architecture support
   ## Needed by binary_grub-efi_wrapper
-  test -f "${ISO_TMP_DIR}/usr/lib/grub/x86_64-efi-signed/gcdx64.efi.signed"
-  test -f "${ISO_TMP_DIR}/usr/lib/shim/shimx64.efi.signed"
-
-  ## TODO: multiple architecture support
-  #cp -a /usr/lib/grub/x86_64-efi-signed/gcdx64.efi.signed "${ISO_TMP_DIR}/TODO/grubx64.efi"
-  #cp -a /usr/lib/shim/shimx64.efi.signed "${ISO_TMP_DIR}/TODO/bootx64.efi"
+  test -f "${RAW_IMAGE_MNT}/usr/lib/grub/x86_64-efi-signed/gcdx64.efi.signed"
+  test -f "${RAW_IMAGE_MNT}/usr/lib/shim/shimx64.efi.signed"
 
   ## grub + shim
   ## shim: bootx64.efi
@@ -240,15 +238,15 @@ copy_kernel_and_initial_ramdisk_and_grub_config() {
   test -f "${ISO_TMP_DIR}/boot/grub/grub_eltorito"
 
   mkdir --parents "${ISO_TMP_DIR}/boot/grub"
-  cp -a "${MNTPOINT}/boot/${kernel_file_name}" "${ISO_TMP_DIR}/boot/${kernel_file_name}"
-  cp -a "${MNTPOINT}/boot/${initial_ramdisk_file_name}" "${ISO_TMP_DIR}/boot/${initial_ramdisk_file_name}"
+  cp -a "${RAW_IMAGE_MNT}/boot/${kernel_file_name}" "${ISO_TMP_DIR}/boot/${kernel_file_name}"
+  cp -a "${RAW_IMAGE_MNT}/boot/${initial_ramdisk_file_name}" "${ISO_TMP_DIR}/boot/${initial_ramdisk_file_name}"
 
   ## TODO: Or if using grub-mkrescue there is no need to copy the /boot folder?
-  #cp -a -r "${MNTPOINT}/boot" "${ISO_TMP_DIR}/boot"
+  #cp -a -r "${RAW_IMAGE_MNT}/boot" "${ISO_TMP_DIR}/boot"
 
   ## Create a copy of the grub.cfg from the raw image as a template for later
   ## adjustment to be functional for the ISO.
-  cp -a "${MNTPOINT}/boot/grub/grub.cfg" "${ISO_TMP_DIR}/boot/grub/grub-raw-image-temp.cfg"
+  cp -a "${RAW_IMAGE_MNT}/boot/grub/grub.cfg" "${ISO_TMP_DIR}/boot/grub/grub-raw-image-temp.cfg"
 
   ## This is what Debian live-build would be doing:
   #cp -a chroot/usr/lib/grub/x86_64-efi-signed/gcdx64.efi.signed chroot/grub-efi-temp/EFI/boot/grubx64.efi
@@ -272,19 +270,19 @@ unmount_cleanup() {
     umount_tool=umount
   fi
 
-  if [ -n "${MNTPOINT:-}" ]; then
-    if findmnt "${MNTPOINT}/boot/efi" &>/dev/null; then
-      $umount_tool "${MNTPOINT}/boot/efi"
+  if [ -n "${RAW_IMAGE_MNT:-}" ]; then
+    if findmnt "${RAW_IMAGE_MNT}/boot/efi" &>/dev/null; then
+      $umount_tool "${RAW_IMAGE_MNT}/boot/efi"
     fi
-    if findmnt "${MNTPOINT}" &>/dev/null; then
-      $umount_tool "${MNTPOINT}"
+    if findmnt "${RAW_IMAGE_MNT}" &>/dev/null; then
+      $umount_tool "${RAW_IMAGE_MNT}"
     fi
   fi
   if [ -n "${RAW_IMAGE_FILE}" ]; then
     kpartx -d -v "${RAW_IMAGE_FILE}"
   fi
-  if [ -n "${MNTPOINT:-}" ]; then
-    rmdir "${MNTPOINT}"
+  if [ -n "${RAW_IMAGE_MNT:-}" ]; then
+    rmdir "${RAW_IMAGE_MNT}"
   fi
 }
 
