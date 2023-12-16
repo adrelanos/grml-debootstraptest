@@ -270,7 +270,7 @@ unmount_cleanup() {
     umount_tool=umount
   fi
 
-  if test -n "${MNTPOINT}"; then
+  if [ -n "${MNTPOINT:-}" ]; then
     if findmnt "${MNTPOINT}/boot/efi" &>/dev/null; then
       $umount_tool "${MNTPOINT}/boot/efi"
     fi
@@ -278,10 +278,10 @@ unmount_cleanup() {
       $umount_tool "${MNTPOINT}"
     fi
   fi
-  if test -n "${RAW_IMAGE_FILE}"; then
+  if [ -n "${RAW_IMAGE_FILE}" ]; then
     kpartx -d -v "${RAW_IMAGE_FILE}"
   fi
-  if test -n "${MNTPOINT}"; then
+  if [ -n "${MNTPOINT:-}" ]; then
     rmdir "${MNTPOINT}"
   fi
 }
