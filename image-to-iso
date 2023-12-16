@@ -59,9 +59,7 @@ parse_arguments() {
   ISO_IMAGE_FILE="$3"
 
   ## read by binary_grub-efi
-  CHROOT_FOLDER="$ISO_TMP_DIR"
-  export CHROOT_FOLDER
-  exit
+  export ISO_TMP_DIR
 }
 
 check_root() {

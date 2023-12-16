@@ -153,7 +153,7 @@ case "${LB_BUILD_WITH_CHROOT}" in
 		_CHROOT_DIR="chroot"
 		;;
 esac
-_CHROOT_DIR="$CHROOT_FOLDER"
+_CHROOT_DIR="$ISO_TMP_DIR"
 #####
 cat >binary.sh <<END
 #!/bin/sh
