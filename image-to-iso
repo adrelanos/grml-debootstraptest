@@ -72,6 +72,7 @@ check_root() {
 check_dependencies() {
   true "Ensure necessary commands are available..."
 
+  test -x ./binary_grub-pc_wrapper
   test -x ./binary_grub-efi_wrapper
   test -x ./grub-raw-cfg-to-grub-iso-cfg
   command -v mksquashfs >/dev/null
@@ -208,7 +209,7 @@ copy_kernel_and_initial_ramdisk_and_grub_config() {
   #cp -a /usr/lib/grub/x86_64-efi-signed/gcdx64.efi.signed "${ISO_TMP_DIR}/TODO/grubx64.efi"
   #cp -a /usr/lib/shim/shimx64.efi.signed "${ISO_TMP_DIR}/TODO/bootx64.efi"
 
-  ## Creates $BINARY_FOLDER which contains the following files:
+  ## Creates $BINARY_FOLDER which contains the following files / folders:
   # /boot/grub/i386-efi/*.mod
   # /boot/grub/x86_64-efi/*.mod
   # /boot/grub/efi.img
@@ -219,6 +220,11 @@ copy_kernel_and_initial_ramdisk_and_grub_config() {
   # /EFI/boot/grubx64.efi
   # efi.img
   ./binary_grub-efi_wrapper
+
+  ## Creates $BINARY_FOLDER which contains the following files / folders:
+  # /boot/grub/i386-pc
+  # /boot/grub/grub_eltorito
+  ./binary_grub-pc_wrapper
 
   mv --verbose "$BINARY_FOLDER"/* "${ISO_TMP_DIR}/"
 
