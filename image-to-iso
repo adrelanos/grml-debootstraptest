@@ -46,6 +46,7 @@ error_handler() {
     true "ERROR: Executed script: '${0}'"
   fi
   unmount_cleanup || true "ERROR: Cleanup unmounting failed." >&2
+  true "ERROR: Exiting with error."
 }
 
 parse_arguments() {
@@ -95,10 +96,11 @@ check_dependencies() {
   # Undocumented dependencies by grub-mkrescue.
   dpkg -l | grep mtools >/dev/null
 
+  ## Not needed on host. Only needed inside image.
   ## grub-efi-amd64-signed
-  test -f /usr/lib/grub/x86_64-efi-signed/gcdx64.efi.signed
+  #test -f /usr/lib/grub/x86_64-efi-signed/gcdx64.efi.signed
   ## shim-signed
-  test -f /usr/lib/shim/shimx64.efi.signed
+  #test -f /usr/lib/shim/shimx64.efi.signed
 
   ## grub-efi-ia32-signed
   #test -f /usr/lib/grub/i386-efi-signed/gcdia32.efi.signed
