@@ -69,6 +69,7 @@ check_root() {
 check_dependencies() {
   true "Ensure necessary commands are available..."
 
+  test -x ./binary_grub-efi_wrapper
   test -x ./grub-raw-cfg-to-grub-iso-cfg
   command -v mksquashfs >/dev/null
   command -v grub-mkrescue >/dev/null
@@ -191,9 +192,29 @@ create_squashfs() {
 copy_kernel_and_initial_ramdisk_and_grub_config() {
   true "Copy kernel and initial ramdisk to the temporary ISO directory..."
 
-  ## Was functional.
-  ## But lacks the real grub folder which contains grub modules.
-  ## Hence replaced with the full grub folder.
+  ## TODO: multiple architecture support
+  ## Needed by binary_grub-efi_wrapper
+  test -f "${ISO_TMP_DIR}/usr/lib/grub/x86_64-efi-signed/gcdx64.efi.signed"
+  test -f "${ISO_TMP_DIR}/usr/lib/shim/shimx64.efi.signed"
+
+  ## TODO: multiple architecture support
+  #cp -a /usr/lib/grub/x86_64-efi-signed/gcdx64.efi.signed "${ISO_TMP_DIR}/TODO/grubx64.efi"
+  #cp -a /usr/lib/shim/shimx64.efi.signed "${ISO_TMP_DIR}/TODO/bootx64.efi"
+
+  ## Creates $BINARY_FOLDER which contains the following files:
+  # /boot/grub/i386-efi/*.mod
+  # /boot/grub/x86_64-efi/*.mod
+  # /boot/grub/efi.img
+  # /boot/grub/unicode.pf2
+  # /EFI/boot/bootia32.efi
+  # /EFI/boot/bootx64.efi
+  # /EFI/boot/grubia32.efi
+  # /EFI/boot/grubx64.efi
+  # efi.img
+  ./binary_grub-efi_wrapper
+
+  mv --verbose "$BINARY_FOLDER"/* "${ISO_TMP_DIR}/"
+
   mkdir --parents "${ISO_TMP_DIR}/boot/grub"
   cp -a "${MNTPOINT}/boot/${kernel_file_name}" "${ISO_TMP_DIR}/boot/${kernel_file_name}"
   cp -a "${MNTPOINT}/boot/${initial_ramdisk_file_name}" "${ISO_TMP_DIR}/boot/${initial_ramdisk_file_name}"
@@ -211,10 +232,6 @@ copy_kernel_and_initial_ramdisk_and_grub_config() {
   #
   #cp -a chroot/usr/lib/grub/i386-efi-signed/gcdia32.efi.signed chroot/grub-efi-temp/EFI/boot/grubia32.efi
   #cp -a chroot/usr/lib/shim/shimia32.efi.signed chroot/grub-efi-temp/EFI/boot/bootia32.efi
-
-  ## TODO: multiple architecture support
-  #cp -a /usr/lib/grub/x86_64-efi-signed/gcdx64.efi.signed "${ISO_TMP_DIR}/TODO/grubx64.efi"
-  #cp -a /usr/lib/shim/shimx64.efi.signed "${ISO_TMP_DIR}/TODO/bootx64.efi"
 }
 
 unmount_cleanup() {
