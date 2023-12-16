@@ -71,7 +71,7 @@ check_root() {
 }
 
 check_dependencies() {
-  true "Ensure necessary commands are available..."
+  true "INFO: Ensure necessary commands are available..."
 
   test -x ./binary_grub-pc_wrapper
   test -x ./binary_grub-efi_wrapper
@@ -119,7 +119,7 @@ setup_directories() {
 }
 
 setup_image_mount() {
-  true "Mount the image file and set up loopback device..."
+  true "INFO: Mount the image file and set up loopback device..."
   DEVINFO=$(kpartx -a -s -v "${RAW_IMAGE_FILE}")
 
   # grml-debootstrap --arch amd64 example DEVINFO:
@@ -138,7 +138,7 @@ setup_image_mount() {
 }
 
 prepare_loopback_info() {
-  true "Extract and prepare loopback device information..."
+  true "INFO: Extract and prepare loopback device information..."
   local loop_part
 
   # Extract the first partition (EFI)
@@ -165,7 +165,7 @@ prepare_loopback_info() {
 }
 
 mount_file_systems() {
-  true "Mount the target file system and EFI partition..."
+  true "INFO: Mount the target file system and EFI partition..."
   mount "${ROOTFS_TARGET}" "${RAW_IMAGE_MNT}"
   mount "${EFI_TARGET}" "${RAW_IMAGE_MNT}/boot/efi"
 }
@@ -177,7 +177,7 @@ create_iso_directories() {
 }
 
 get_file_names() {
-  true "Retrieve the kernel version from the mounted image..."
+  true "INFO: Retrieve the kernel version from the mounted image..."
   KVERSION=$(cd "${RAW_IMAGE_MNT}/boot" && find vmlinuz-* | tail -1 | sed 's@vmlinuz-@@')
 
   # Define paths for the kernel file and initial ramdisk.
@@ -186,7 +186,7 @@ get_file_names() {
 }
 
 create_squashfs() {
-  true "Creating squashfs..."
+  true "INFO: Creating squashfs..."
   ## Take the contents of the VM image and create the squashfs.img file in the LiveOS folder
   ## within the temporary ISO directory.
   ##
@@ -203,7 +203,7 @@ create_squashfs() {
 }
 
 copy_kernel_and_initial_ramdisk_and_grub_config() {
-  true "Copy kernel and initial ramdisk to the temporary ISO directory..."
+  true "INFO: Copy kernel and initial ramdisk to the temporary ISO directory..."
 
   ## TODO: multiple architecture support
   ## Needed by binary_grub-efi_wrapper
@@ -259,7 +259,7 @@ copy_kernel_and_initial_ramdisk_and_grub_config() {
 }
 
 unmount_cleanup() {
-  true "Unmount partitions and clean up loopback device..."
+  true "INFO: Unmount partitions and clean up loopback device..."
 
   ## syntax:
   #~/derivative-maker/help-steps/unmount-helper -- /tmp/user/0/tmp.6UT5XIy8K9
@@ -291,7 +291,7 @@ unmount_cleanup() {
 }
 
 grub_raw_image_config_to_grub_iso_image_config() {
-  true "Create the GRUB configuration file for the ISO."
+  true "INFO: Create the GRUB configuration file for the ISO."
 
   # Notes:
   # - The /boot folder originates from the temporary ISO directory.
@@ -348,7 +348,7 @@ grub_raw_image_config_to_grub_iso_image_config() {
 }
 
 create_iso() {
-  true "Create the ISO using grub-mkrescue based on the temporary ISO directory..."
+  true "INFO: Create the ISO using grub-mkrescue based on the temporary ISO directory..."
 
   ## Was functional,
   ## except for not including shim and therefore likely Secure Boot issues.
@@ -403,7 +403,7 @@ create_iso() {
 }
 
 cleanup_temporary_files() {
-  true "Cleanup temporary files..."
+  true "INFO: Cleanup temporary files..."
   # Not deleting for easier debugging.
   #rm -r "${ISO_TMP_DIR}"
 }
@@ -424,7 +424,7 @@ main() {
   grub_raw_image_config_to_grub_iso_image_config
   create_iso
   cleanup_temporary_files
-  true "Done."
+  true "INFO: Done."
 }
 
 # shellcheck disable=SC2039,3047
