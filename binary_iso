@@ -170,13 +170,14 @@ esac
 
 cat > binary.sh << EOF
 #!/bin/sh
-xorriso -as mkisofs ${XORRISO_OPTIONS} -o ${IMAGE} binary
+set -x
+xorriso -as mkisofs ${XORRISO_OPTIONS} -o ${IMAGE} ${ISO_TMP_DIR}
 EOF
 
 # retain the xorriso command used to create the image in the image itself
 mkdir -p ${BINARY_FOLDER}/.disk
 cat <<-EOF >${BINARY_FOLDER}/.disk/mkisofs
-xorriso -as mkisofs ${XORRISO_OPTIONS} -o ${IMAGE} binary
+xorriso -as mkisofs ${XORRISO_OPTIONS} -o ${IMAGE} ${ISO_TMP_DIR}
 EOF
 # Set the timestamp
 find ${BINARY_FOLDER}/.disk -newermt "$(date -d@${SOURCE_DATE_EPOCH} '+%Y-%m-%d %H:%M:%S')" -printf "%y %p\n" -exec touch '{}' -d@${SOURCE_DATE_EPOCH} ';' >> binary.modified_timestamps
