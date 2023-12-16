@@ -41,5 +41,8 @@ LB_IMAGE_TYPE=iso-hybrid
 _QUIET=""
 _VERBOSE="true"
 LB_ISO_APPLICATION=none
+LB_ISO_VOLUME=cdlabel
+LB_ISO_PREPARER=preparer
+LB_ISO_PUBLISHER=publisher
 
 sh -xveu ./binary_iso

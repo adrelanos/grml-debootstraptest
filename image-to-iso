@@ -209,6 +209,9 @@ copy_kernel_and_initial_ramdisk_and_grub_config() {
   #cp -a /usr/lib/grub/x86_64-efi-signed/gcdx64.efi.signed "${ISO_TMP_DIR}/TODO/grubx64.efi"
   #cp -a /usr/lib/shim/shimx64.efi.signed "${ISO_TMP_DIR}/TODO/bootx64.efi"
 
+  ## grub + shim
+  ## shim: bootx64.efi
+  ## grub: grubx64.efi
   ## Creates $BINARY_FOLDER which contains the following files / folders:
   # /boot/grub/i386-efi/*.mod
   # /boot/grub/x86_64-efi/*.mod
@@ -227,6 +230,10 @@ copy_kernel_and_initial_ramdisk_and_grub_config() {
   ./binary_grub-pc_wrapper
 
   mv --verbose "$BINARY_FOLDER"/* "${ISO_TMP_DIR}/"
+
+  ## Sanity tests.
+  test -f "${ISO_TMP_DIR}/boot/grub/efi.img"
+  test -f "${ISO_TMP_DIR}/boot/grub/grub_eltorito"
 
   mkdir --parents "${ISO_TMP_DIR}/boot/grub"
   cp -a "${MNTPOINT}/boot/${kernel_file_name}" "${ISO_TMP_DIR}/boot/${kernel_file_name}"

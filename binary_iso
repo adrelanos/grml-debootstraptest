@@ -151,6 +151,7 @@ case "${LB_BOOTLOADER_EFI}" in
 			XORRISO_OPTIONS="${XORRISO_OPTIONS} -isohybrid-gpt-basdat -isohybrid-apm-hfsplus"
 		else
 			Echo_message "No EFI boot code to include in the ISO"
+			exit 1
 		fi
 		;;
 
