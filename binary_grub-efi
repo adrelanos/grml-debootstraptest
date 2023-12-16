@@ -132,7 +132,7 @@ Restore_package_cache binary
 Install_packages
 
 # Cleanup files that we generate
-rm -rf binary/boot/efi.img binary/boot/grub/i386-efi/ binary/boot/grub/x86_64-efi binary/boot/grub/arm64-efi binary/boot/grub/arm-efi
+rm -rf ${BINARY_FOLDER}/boot/efi.img ${BINARY_FOLDER}/boot/grub/i386-efi/ ${BINARY_FOLDER}/boot/grub/x86_64-efi ${BINARY_FOLDER}/boot/grub/arm64-efi ${BINARY_FOLDER}/boot/grub/arm-efi
 
 # This is workaround till both efi-image and grub-cpmodules are put into a binary package
 case "${LB_BUILD_WITH_CHROOT}" in
@@ -153,7 +153,7 @@ case "${LB_BUILD_WITH_CHROOT}" in
 		_CHROOT_DIR="chroot"
 		;;
 esac
-_CHROOT_DIR="$ISO_TMP_DIR"
+_CHROOT_DIR="${ISO_TMP_DIR}"
 #####
 cat >binary.sh <<END
 #!/bin/sh
@@ -306,8 +306,8 @@ rm -f ${_CHROOT_DIR}/grub-efi-temp/bootnetx64.efi
 rm -f ${_CHROOT_DIR}/grub-efi-temp/bootnetaa64.efi
 rm -f ${_CHROOT_DIR}/grub-efi-temp/bootnetarm.efi
 
-mkdir -p binary
-cp -a ${_CHROOT_DIR}/grub-efi-temp/* binary/
+mkdir -p ${BINARY_FOLDER}
+cp -a ${_CHROOT_DIR}/grub-efi-temp/* ${BINARY_FOLDER}/
 rm -rf ${_CHROOT_DIR}/grub-efi-temp-x86_64-efi
 rm -rf ${_CHROOT_DIR}/grub-efi-temp-i386-efi
 rm -rf ${_CHROOT_DIR}/grub-efi-temp-arm64-efi

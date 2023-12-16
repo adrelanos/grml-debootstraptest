@@ -57,9 +57,6 @@ parse_arguments() {
   RAW_IMAGE_FILE="$1"
   ISO_TMP_DIR="$2"
   ISO_IMAGE_FILE="$3"
-
-  ## read by binary_grub-efi
-  export ISO_TMP_DIR
 }
 
 check_root() {
@@ -99,6 +96,14 @@ check_dependencies() {
   #test -f /usr/lib/shim/shimia32.efi.signed
   ## shim-signed arm64
   #test -f /usr/lib/shim/shimaa64.efi.signed
+}
+
+setup_directories() {
+  BINARY_FOLDER=$(mktemp --directory)
+
+  ## read by binary_grub-efi
+  export BINARY_FOLDER
+  export ISO_TMP_DIR
 }
 
 setup_image_mount() {
@@ -353,6 +358,7 @@ main() {
   parse_arguments "$@"
   check_root
   check_dependencies
+  setup_directories
   setup_image_mount
   prepare_loopback_info
   mount_file_systems
