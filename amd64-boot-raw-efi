@@ -10,7 +10,7 @@ set -e
 ## We might get away with --no-install-recommends, fewer packages.
 sudo apt-get install qemu-system-arm qemu-system-aarch64 qemu-efi-aarch64 qemu-utils
 
-## user: user
+## user: root
 ## password: changeme
 
 #qemu-system-x86_64 \
