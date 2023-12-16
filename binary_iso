@@ -48,8 +48,8 @@ Check_stagefile
 Acquire_lockfile
 
 # Checking depends
-Check_package chroot /usr/bin/xorriso xorriso
-Check_package chroot /usr/lib/ISOLINUX/isohdpfx.bin isolinux
+Check_package ${ISO_TMP_DIR} /usr/bin/xorriso xorriso
+Check_package ${ISO_TMP_DIR} /usr/lib/ISOLINUX/isohdpfx.bin isolinux
 
 # Restoring cache
 Restore_package_cache binary
@@ -145,7 +145,7 @@ fi
 # Enable EFI bootloader selection
 case "${LB_BOOTLOADER_EFI}" in
 	grub-efi)
-		if [ -e binary/boot/grub/efi.img ]; then
+		if [ -e ${BINARY_FOLDER}/boot/grub/efi.img ]; then
 			XORRISO_OPTIONS="${XORRISO_OPTIONS} -e boot/grub/efi.img -no-emul-boot"
 			XORRISO_OPTIONS="${XORRISO_OPTIONS} -isohybrid-gpt-basdat -isohybrid-apm-hfsplus"
 		else
@@ -173,24 +173,24 @@ xorriso -as mkisofs ${XORRISO_OPTIONS} -o ${IMAGE} binary
 EOF
 
 # retain the xorriso command used to create the image in the image itself
-mkdir -p binary/.disk
-cat <<-EOF >binary/.disk/mkisofs
+mkdir -p ${BINARY_FOLDER}/.disk
+cat <<-EOF >${BINARY_FOLDER}/.disk/mkisofs
 xorriso -as mkisofs ${XORRISO_OPTIONS} -o ${IMAGE} binary
 EOF
 # Set the timestamp
-find binary/.disk -newermt "$(date -d@${SOURCE_DATE_EPOCH} '+%Y-%m-%d %H:%M:%S')" -printf "%y %p\n" -exec touch '{}' -d@${SOURCE_DATE_EPOCH} ';' >> binary.modified_timestamps
+find ${BINARY_FOLDER}/.disk -newermt "$(date -d@${SOURCE_DATE_EPOCH} '+%Y-%m-%d %H:%M:%S')" -printf "%y %p\n" -exec touch '{}' -d@${SOURCE_DATE_EPOCH} ';' >> binary.modified_timestamps
 
 case "${LB_BUILD_WITH_CHROOT}" in
 	true)
 		# Moving image
-		mv binary.sh chroot
-		mv binary chroot
+		mv binary.sh ${ISO_TMP_DIR}
+		mv binary ${ISO_TMP_DIR}
 
-		Chroot chroot "sh binary.sh"
+		Chroot ${ISO_TMP_DIR} "sh binary.sh"
 
 		# Move image
-		mv chroot/binary chroot/${IMAGE} ./
-		rm -f chroot/binary.sh
+		mv ${ISO_TMP_DIR}/binary ${ISO_TMP_DIR}/${IMAGE} ./
+		rm -f ${ISO_TMP_DIR}/binary.sh
 		;;
 
 	false)
