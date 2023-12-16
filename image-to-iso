@@ -205,6 +205,12 @@ create_squashfs() {
 copy_kernel_and_initial_ramdisk_and_grub_config() {
   true "INFO: Copy kernel and initial ramdisk to the temporary ISO directory..."
 
+  ## Sanity test.
+  ## During mksquashfs might be commented out. But if mksquashfs does not exist, the image will boot
+  ## but dracut obviously fail to find the root filesystem. This this can be confusing nonetheless
+  ## until noticed. Therefore adding a sanity test here.
+  test -f "${ISO_TMP_DIR}/LiveOS/squashfs.img"
+
   ## TODO: multiple architecture support
   ## Needed by binary_grub-efi_wrapper
   test -f "${RAW_IMAGE_MNT}/usr/lib/grub/x86_64-efi-signed/gcdx64.efi.signed"
