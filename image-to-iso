@@ -74,6 +74,7 @@ check_dependencies() {
 
   test -x ./binary_grub-pc_wrapper
   test -x ./binary_grub-efi_wrapper
+  test -x ./binary_iso_wrapper
   test -x ./grub-raw-cfg-to-grub-iso-cfg
   command -v mksquashfs >/dev/null
   command -v grub-mkrescue >/dev/null
@@ -345,6 +346,8 @@ grub_raw_image_config_to_grub_iso_image_config() {
 create_iso() {
   true "Create the ISO using grub-mkrescue based on the temporary ISO directory..."
 
+  ## Was functional,
+  ## except for not including shim and therefore likely Secure Boot issues.
   ## '-V cdlabel' set label to 'cdlabel'. This must match the 'root=live:CDLABEL=cdlabel' kernel command line.
   ##
   ## XXX: consistent architectures
@@ -360,11 +363,12 @@ create_iso() {
   ## ~/grml-debootstraptestbin/iso_tmp/boot/grub/grub.cfg
   ## and then:
   ## sudo grub-mkrescue --verbose -V cdlabel -o ~/grml-debootstraptestbin/output.iso ~/grml-debootstraptestbin/iso_tmp
-  grub-mkrescue \
-    --verbose \
-    -V cdlabel \
-    -o "${ISO_IMAGE_FILE}" \
-    "${ISO_TMP_DIR}"
+  ##
+  #   grub-mkrescue \
+  #     --verbose \
+  #     -V cdlabel \
+  #     -o "${ISO_IMAGE_FILE}" \
+  #     "${ISO_TMP_DIR}"
 
   # grub-mkrescue:
   # xorriso -as mkisofs -graft-points --modification-date=2023121215520700 -b boot/grub/i386-pc/eltorito.img -no-emul-boot -boot-load-size 4 -boot-info-table --grub2-boot-info --grub2-mbr /usr/lib/grub/i386-pc/boot_hybrid.img -hfsplus -apm-block-size 2048 -hfsplus-file-creator-type chrp tbxj /System/Library/CoreServices/.disk_label -hfs-bless-by i /System/Library/CoreServices/boot.efi --efi-boot efi.img -efi-boot-part --efi-boot-image --protective-msdos-label -o /home/user/grml-debootstraptestbin/output.iso -r /tmp/user/0/grub.UQp4UP --sort-weight 0 / --sort-weight 1 /boot -V cdlabel /tmp/tmpdir.
@@ -381,6 +385,14 @@ create_iso() {
   ## -R
   ## -J
   ## -joliet-long
+
+  ## ###
+
+  ## xorriso -as mkisofs -R -r -J -joliet-long -l -cache-inodes -iso-level 3 -v -p preparer -publisher publisher -V cdlabel --modification-date=2023121616391700 -no-emul-boot -boot-load-size 4 -boot-info-table -b boot/grub/grub_eltorito -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot -isohybrid-gpt-basdat -isohybrid-apm-hfsplus -o /tmp/iso.iso /tmp/a
+  ##
+  ## Also creates file:
+  ## /.disk/mkisofs
+  ./binary_iso_wrapper
 
   # Fix permissions.
   chown "${SUDO_USER}:${SUDO_USER}" "${ISO_IMAGE_FILE}"
