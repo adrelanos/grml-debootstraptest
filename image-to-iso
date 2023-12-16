@@ -120,7 +120,7 @@ setup_directories() {
 
 setup_image_mount() {
   true "Mount the image file and set up loopback device..."
-  DEVINFO=$(kpartx -a -s -r -v "${RAW_IMAGE_FILE}")
+  DEVINFO=$(kpartx -a -s -v "${RAW_IMAGE_FILE}")
 
   # grml-debootstrap --arch amd64 example DEVINFO:
   # add map loop1p1 (253:3): 0 204800 linear 7:1 2048
