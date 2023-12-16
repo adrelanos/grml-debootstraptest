@@ -35,6 +35,7 @@ case "${LB_IMAGE_TYPE}" in
 		exit 0
 		;;
 esac
+IMAGE="$ISO_IMAGE_FILE"
 
 Echo_message "Begin building binary iso image..."
 
@@ -49,7 +50,7 @@ Acquire_lockfile
 
 # Checking depends
 Check_package ${ISO_TMP_DIR} /usr/bin/xorriso xorriso
-Check_package ${ISO_TMP_DIR} /usr/lib/ISOLINUX/isohdpfx.bin isolinux
+#Check_package ${ISO_TMP_DIR} /usr/lib/ISOLINUX/isohdpfx.bin isolinux
 
 # Restoring cache
 Restore_package_cache binary
