@@ -1,0 +1,21 @@
+#!/bin/sh
+
+Require_stagefiles() {
+  true noop
+}
+
+Stagefile_name() {
+  true noop
+}
+
+Install_packages() {
+  true noop
+}
+
+Restore_package_cache() {
+  true noop
+}
+
+Create_stagefile() {
+  true noop
+}

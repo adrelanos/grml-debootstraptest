@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# SPDX-FileCopyrightText: 2023 - 2023 ENCRYPTED SUPPORT LP <adrelanos@kicksecure.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+## Initial fork.
+## cp /usr/lib/live/build/binary_grub-efi ./binary_grub-efi
+
+set -x
+set -e
+set -o nounset
+set -o allexport
+
+LIVE_BUILD=/usr/lib/live/build/scripts
+_COLOR=""
+## TODO
+LB_ARCHITECTURE=amd64
+LB_PARENT_DISTRIBUTION=sid
+LB_APT_HTTP_PROXY=""
+LB_LINUX_FLAVOURS=""
+LB_BOOTLOADERS=grub-efi
+LB_DEBIAN_INSTALLER_PRESEEDFILE="/preseed.cfg"
+LB_BOOTAPPEND_INSTALL=""
+LB_BOOTSTRAP_QEMU_ARCHITECTURES=""
+CONFIG_VALIDATED=true
+_LB_PACKAGES=""
+http_proxy=""
+no_proxy=""
+LB_BUILD_WITH_CHROOT=false
+LB_UEFI_SECURE_BOOT=enable
+## set by image-to-iso
+CHROOT_FOLDER="$CHROOT_FOLDER"
+
+sh -xveu ./binary_grub-efi

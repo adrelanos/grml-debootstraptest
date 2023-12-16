@@ -30,6 +30,8 @@
 #   manually. To work around this, something like an ARM64 build chroot and
 #   QEMU might work.
 
+# TODO: Secure Boot / shim support
+
 set -x
 set -e
 set -o pipefail
@@ -55,6 +57,11 @@ parse_arguments() {
   RAW_IMAGE_FILE="$1"
   ISO_TMP_DIR="$2"
   ISO_IMAGE_FILE="$3"
+
+  ## read by binary_grub-efi
+  CHROOT_FOLDER="$ISO_TMP_DIR"
+  export CHROOT_FOLDER
+  exit
 }
 
 check_root() {
@@ -77,9 +84,23 @@ check_dependencies() {
   command -v rmdir >/dev/null
 
   # Undocumented dependencies by grub-mkrescue.
-  dpkg -l | grep grub-efi-amd64-bin >/dev/null
-  dpkg -l | grep grub-efi-amd64-signed >/dev/null
+  #dpkg -l | grep grub-efi-amd64-bin >/dev/null
+  #dpkg -l | grep grub-efi-amd64-signed >/dev/null
+
+  # Undocumented dependencies by grub-mkrescue.
   dpkg -l | grep mtools >/dev/null
+
+  ## grub-efi-amd64-signed
+  test -f /usr/lib/grub/x86_64-efi-signed/gcdx64.efi.signed
+  ## shim-signed
+  test -f /usr/lib/shim/shimx64.efi.signed
+
+  ## grub-efi-ia32-signed
+  #test -f /usr/lib/grub/i386-efi-signed/gcdia32.efi.signed
+  ## shim-signed i386
+  #test -f /usr/lib/shim/shimia32.efi.signed
+  ## shim-signed arm64
+  #test -f /usr/lib/shim/shimaa64.efi.signed
 }
 
 setup_image_mount() {
@@ -180,6 +201,17 @@ copy_kernel_and_initial_ramdisk_and_grub_config() {
   ## Create a copy of the grub.cfg from the raw image as a template for later
   ## adjustment to be functional for the ISO.
   cp -a "${MNTPOINT}/boot/grub/grub.cfg" "${ISO_TMP_DIR}/boot/grub/grub-raw-image-temp.cfg"
+
+  ## This is what Debian live-build would be doing:
+  #cp -a chroot/usr/lib/grub/x86_64-efi-signed/gcdx64.efi.signed chroot/grub-efi-temp/EFI/boot/grubx64.efi
+  #cp -a chroot/usr/lib/shim/shimx64.efi.signed chroot/grub-efi-temp/EFI/boot/bootx64.efi
+  #
+  #cp -a chroot/usr/lib/grub/i386-efi-signed/gcdia32.efi.signed chroot/grub-efi-temp/EFI/boot/grubia32.efi
+  #cp -a chroot/usr/lib/shim/shimia32.efi.signed chroot/grub-efi-temp/EFI/boot/bootia32.efi
+
+  ## TODO: multiple architecture support
+  #cp -a /usr/lib/grub/x86_64-efi-signed/gcdx64.efi.signed "${ISO_TMP_DIR}/TODO/grubx64.efi"
+  #cp -a /usr/lib/shim/shimx64.efi.signed "${ISO_TMP_DIR}/TODO/bootx64.efi"
 }
 
 unmount_cleanup() {
