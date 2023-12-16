@@ -13,6 +13,7 @@ set -e
 
 # Including common functions
 [ -e "${LIVE_BUILD}/scripts/build.sh" ] && . "${LIVE_BUILD}/scripts/build.sh" || . /usr/lib/live/build.sh
+. ./functions
 
 # Setting static variables
 DESCRIPTION="Installs grub-pc into binary"
@@ -56,15 +57,15 @@ Restore_package_cache binary
 Install_packages
 
 # Copying templates
-mkdir -p binary/boot/grub/i386-pc
+mkdir -p ${BINARY_FOLDER}/boot/grub/i386-pc
 
 case ${LB_IMAGE_TYPE} in
 	iso|iso-hybrid)
-		FILES="chroot/usr/lib/grub/i386-pc/*.mod chroot/usr/lib/grub/i386-pc/*.lst chroot/usr/lib/grub/i386-pc/efiemu??.o chroot/usr/share/grub/*.pf2"
+		FILES="${ISO_TMP_DIR}/usr/lib/grub/i386-pc/*.mod ${ISO_TMP_DIR}/usr/lib/grub/i386-pc/*.lst ${ISO_TMP_DIR}/usr/lib/grub/i386-pc/efiemu??.o ${ISO_TMP_DIR}/usr/share/grub/*.pf2"
 		;;
 
 	hdd|tar)
-		FILES="chroot/usr/lib/grub/i386-pc/*"
+		FILES="${ISO_TMP_DIR}/usr/lib/grub/i386-pc/*"
 		;;
 esac
 
@@ -74,14 +75,14 @@ then
 fi
 
 # Copying grub
-cp ${FILES} binary/boot/grub/i386-pc
+cp ${FILES} ${BINARY_FOLDER}/boot/grub/i386-pc
 
 # Create eltorito image for ISO cases
 if [ "${LIVE_IMAGE_TYPE}" = "iso" ] || [ "${LIVE_IMAGE_TYPE}" = "iso-hybrid" ]; then
 
 	cat > binary.sh << EOF
 #!/bin/sh
-
+set -x
 INPUT_DIR="/usr/lib/grub/i386-pc"
 
 # build core.img
@@ -98,13 +99,13 @@ EOF
 		true)
 			mv binary.sh chroot
 			Chroot chroot "sh binary.sh"
-			mv chroot/grub_eltorito binary/boot/grub/grub_eltorito
-			rm -f chroot/binary.sh
+			mv ${ISO_TMP_DIR}/grub_eltorito ${BINARY_FOLDER}/boot/grub/grub_eltorito
+			rm -f ${ISO_TMP_DIR}/binary.sh
 			;;
 
 		false)
 			sh binary.sh
-			mv grub_eltorito binary/boot/grub/grub_eltorito
+			mv grub_eltorito ${BINARY_FOLDER}/boot/grub/grub_eltorito
 			rm -f binary.sh
 			;;
 	esac

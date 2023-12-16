@@ -19,3 +19,11 @@ Restore_package_cache() {
 Create_stagefile() {
   true noop
 }
+
+Remove_packages() {
+  true noop
+}
+
+Save_package_cache() {
+  true noop
+}
