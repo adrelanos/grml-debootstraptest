@@ -146,7 +146,7 @@ fi
 # Enable EFI bootloader selection
 case "${LB_BOOTLOADER_EFI}" in
 	grub-efi)
-		if [ -e ${BINARY_FOLDER}/boot/grub/efi.img ]; then
+		if [ -e ${ISO_TMP_DIR}/boot/grub/efi.img ]; then
 			XORRISO_OPTIONS="${XORRISO_OPTIONS} -e boot/grub/efi.img -no-emul-boot"
 			XORRISO_OPTIONS="${XORRISO_OPTIONS} -isohybrid-gpt-basdat -isohybrid-apm-hfsplus"
 		else
@@ -176,12 +176,12 @@ xorriso -as mkisofs ${XORRISO_OPTIONS} -o ${IMAGE} ${ISO_TMP_DIR}
 EOF
 
 # retain the xorriso command used to create the image in the image itself
-mkdir -p ${BINARY_FOLDER}/.disk
-cat <<-EOF >${BINARY_FOLDER}/.disk/mkisofs
+mkdir -p ${ISO_TMP_DIR}/.disk
+cat <<-EOF >${ISO_TMP_DIR}/.disk/mkisofs
 xorriso -as mkisofs ${XORRISO_OPTIONS} -o ${IMAGE} ${ISO_TMP_DIR}
 EOF
 # Set the timestamp
-find ${BINARY_FOLDER}/.disk -newermt "$(date -d@${SOURCE_DATE_EPOCH} '+%Y-%m-%d %H:%M:%S')" -printf "%y %p\n" -exec touch '{}' -d@${SOURCE_DATE_EPOCH} ';' >> binary.modified_timestamps
+find ${ISO_TMP_DIR}/.disk -newermt "$(date -d@${SOURCE_DATE_EPOCH} '+%Y-%m-%d %H:%M:%S')" -printf "%y %p\n" -exec touch '{}' -d@${SOURCE_DATE_EPOCH} ';' >> binary.modified_timestamps
 
 case "${LB_BUILD_WITH_CHROOT}" in
 	true)

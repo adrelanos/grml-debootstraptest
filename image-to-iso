@@ -231,6 +231,7 @@ copy_kernel_and_initial_ramdisk_and_grub_config() {
   ./binary_grub-pc_wrapper
 
   ## Use '/.*' to also copy the hidden '.disk' folder.
+  ## But that foldes does only exist after binary_iso_wrapper has been run.
   #mv --verbose "$BINARY_FOLDER"/.* "${ISO_TMP_DIR}/"
   mv --verbose "$BINARY_FOLDER"/* "${ISO_TMP_DIR}/"
 
