@@ -229,7 +229,8 @@ copy_kernel_and_initial_ramdisk_and_grub_config() {
   # /boot/grub/grub_eltorito
   ./binary_grub-pc_wrapper
 
-  mv --verbose "$BINARY_FOLDER"/* "${ISO_TMP_DIR}/"
+  ## Use '/.*' to also copy the hidden '.disk' folder.
+  mv --verbose "$BINARY_FOLDER"/.* "${ISO_TMP_DIR}/"
 
   ## Sanity tests.
   test -f "${ISO_TMP_DIR}/boot/grub/efi.img"
