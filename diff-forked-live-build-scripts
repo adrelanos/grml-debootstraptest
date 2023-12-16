@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# SPDX-FileCopyrightText: 2023 - 2023 ENCRYPTED SUPPORT LP <adrelanos@kicksecure.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+## requires running apt-cacher-ng
+
+set -x
+set -e
+
+meld /usr/lib/live/build/binary_grub-pc ./binary_grub-pc
+meld /usr/lib/live/build/binary_grub-efi ./binary_grub-efi
+meld /usr/lib/live/build/binary_iso ./binary_iso
