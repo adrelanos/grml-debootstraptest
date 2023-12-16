@@ -13,6 +13,7 @@ set -e
 
 # Including common functions
 [ -e "${LIVE_BUILD}/scripts/build.sh" ] && . "${LIVE_BUILD}/scripts/build.sh" || . /usr/lib/live/build.sh
+. ./functions
 
 # Setting static variables
 DESCRIPTION="Build iso binary image"

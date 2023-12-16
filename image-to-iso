@@ -79,6 +79,9 @@ check_dependencies() {
   command -v umount >/dev/null
   command -v rmdir >/dev/null
 
+  ## Used by live-build.
+  dpkg -l | grep isolinux >/dev/null
+
   # Undocumented dependencies by grub-mkrescue.
   #dpkg -l | grep grub-efi-amd64-bin >/dev/null
   #dpkg -l | grep grub-efi-amd64-signed >/dev/null
