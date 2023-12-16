@@ -231,7 +231,8 @@ copy_kernel_and_initial_ramdisk_and_grub_config() {
   ./binary_grub-pc_wrapper
 
   ## Use '/.*' to also copy the hidden '.disk' folder.
-  mv --verbose "$BINARY_FOLDER"/.* "${ISO_TMP_DIR}/"
+  #mv --verbose "$BINARY_FOLDER"/.* "${ISO_TMP_DIR}/"
+  mv --verbose "$BINARY_FOLDER"/* "${ISO_TMP_DIR}/"
 
   ## Sanity tests.
   test -f "${ISO_TMP_DIR}/boot/grub/efi.img"
@@ -278,11 +279,13 @@ unmount_cleanup() {
       $umount_tool "${RAW_IMAGE_MNT}"
     fi
   fi
-  if [ -n "${RAW_IMAGE_FILE}" ]; then
+  if [ -n "${RAW_IMAGE_FILE:-}" ]; then
     kpartx -d -v "${RAW_IMAGE_FILE}"
   fi
   if [ -n "${RAW_IMAGE_MNT:-}" ]; then
-    rmdir "${RAW_IMAGE_MNT}"
+    if test -d "${RAW_IMAGE_MNT}" ; then
+      rmdir "${RAW_IMAGE_MNT}"
+    fi
   fi
 }
 
