@@ -45,7 +45,7 @@ error_handler() {
   else
     true "ERROR: Executed script: '${0}'"
   fi
-  unmount_cleanup || true "ERROR: Cleanup unmounting failed." >&2
+  unmount_cleanup || true "ERROR: Cleanup unmounting failed."
   true "ERROR: Exiting with error."
 }
 
