@@ -12,33 +12,13 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-acpi-support-base
-bridge-utils
-bzip2
 console-common
 console-data
-cryptsetup
-dbus
-file
 grub-pc
-ifenslave
-isc-dhcp-client
 less
 locales
 lsb-release
-lsof
-lvm2
-mdadm
 most
-pciutils
-resolvconf
-rsync
-screen
-strace
-usbutils
-vim
-vlan
-w3m
 zsh
 
 dracut-live
