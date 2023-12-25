@@ -30,8 +30,6 @@
 #   manually. To work around this, something like an ARM64 build chroot and
 #   QEMU might work.
 
-# TODO: Secure Boot / shim support
-
 set -x
 set -e
 set -o pipefail
