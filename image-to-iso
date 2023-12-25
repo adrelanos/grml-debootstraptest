@@ -247,7 +247,8 @@ copy_kernel_and_initial_ramdisk_and_grub_config() {
   cp -a "${RAW_IMAGE_MNT}/boot/${kernel_file_name}" "${ISO_TMP_DIR}/boot/${kernel_file_name}"
   cp -a "${RAW_IMAGE_MNT}/boot/${initial_ramdisk_file_name}" "${ISO_TMP_DIR}/boot/${initial_ramdisk_file_name}"
 
-  ## TODO: Or if using grub-mkrescue there is no need to copy the /boot folder?
+  ## If using grub-mkrescue there is no need to copy the /boot folder except for kernel and initrd because
+  ## grub-mkrescue should handle all of that.
   #cp -a -r "${RAW_IMAGE_MNT}/boot" "${ISO_TMP_DIR}/boot"
 
   ## Create a copy of the grub.cfg from the raw image as a template for later
@@ -356,6 +357,10 @@ create_iso() {
 
   ## Was functional,
   ## except for not including shim and therefore likely Secure Boot issues.
+  ## grub feature request:
+  ## grub-mkrescue ISO Secure Boot / shim support
+  ## https://savannah.gnu.org/bugs/?65039
+  ##
   ## '-V cdlabel' set label to 'cdlabel'. This must match the 'root=live:CDLABEL=cdlabel' kernel command line.
   ##
   ## XXX: consistent architectures
