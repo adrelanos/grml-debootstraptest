@@ -209,10 +209,25 @@ copy_kernel_and_initial_ramdisk_and_grub_config() {
   ## until noticed. Therefore adding a sanity test here.
   test -f "${ISO_TMP_DIR}/LiveOS/squashfs.img"
 
-  ## TODO: multiple architecture support
-  ## Needed by binary_grub-efi_wrapper
-  test -f "${RAW_IMAGE_MNT}/usr/lib/grub/x86_64-efi-signed/gcdx64.efi.signed"
-  test -f "${RAW_IMAGE_MNT}/usr/lib/shim/shimx64.efi.signed"
+  architecture=$(dpkg --print-architecture)
+
+  case $architecture in
+    amd64)
+      check_bootloader_files="yes"
+      ;;
+    i386)
+      check_bootloader_files="yes"
+      ;;
+    *)
+      check_bootloader_files="no"
+      ;;
+  esac
+
+  if [ "$check_bootloader_files" = "yes" ]; then
+    ## Needed by binary_grub-efi_wrapper
+    test -f "${RAW_IMAGE_MNT}/usr/lib/grub/x86_64-efi-signed/gcdx64.efi.signed"
+    test -f "${RAW_IMAGE_MNT}/usr/lib/shim/shimx64.efi.signed"
+  fi
 
   ## grub + shim
   ## shim: bootx64.efi
