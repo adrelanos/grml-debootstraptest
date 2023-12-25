@@ -14,8 +14,7 @@ set -o allexport
 
 LIVE_BUILD=/usr/lib/live/build/scripts
 _COLOR=""
-## TODO
-LB_ARCHITECTURE=amd64
+LB_ARCHITECTURE=$(dpkg --print-architecture)
 LB_PARENT_DISTRIBUTION=sid
 LB_APT_HTTP_PROXY=""
 LB_LINUX_FLAVOURS=""
