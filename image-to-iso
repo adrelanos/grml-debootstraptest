@@ -68,22 +68,6 @@ check_root() {
   fi
 }
 
-architecture_detection() {
-  architecture=$(dpkg --print-architecture)
-
-  case $architecture in
-    amd64)
-      check_bootloader_files="yes"
-      ;;
-    i386)
-      check_bootloader_files="yes"
-      ;;
-    *)
-      check_bootloader_files="no"
-      ;;
-  esac
-}
-
 check_dependencies() {
   true "INFO: Ensure necessary commands are available..."
 
@@ -108,29 +92,41 @@ check_dependencies() {
   ## Also needed by the live-build scripts.
   dpkg -l | grep mtools >/dev/null
 
-  if [ "$check_bootloader_files" = "no" ]; then
-    return 0
-  fi
+  architecture=$(dpkg --print-architecture)
 
   ## Undocumented dependencies by grub-mkrescue.
   ## Also needed by the live-build scripts.
-  dpkg -l | grep grub-efi-amd64-bin >/dev/null
-  dpkg -l | grep grub-efi-amd64-signed >/dev/null
-  dpkg -l | grep grub-efi-ia32-bin >/dev/null
-  dpkg -l | grep shim-signed >/dev/null
 
-  ## grub-efi-amd64-signed
-  test -f /usr/lib/grub/x86_64-efi-signed/gcdx64.efi.signed
-
-  ## shim-signed amd64
-  test -f /usr/lib/shim/shimx64.efi.signed
-
-  ## grub-efi-ia32-signed
-  test -f /usr/lib/grub/i386-efi-signed/gcdia32.efi.signed
-  ## shim-signed i386
-  test -f /usr/lib/shim/shimia32.efi.signed
-  ## shim-signed arm64
-  test -f /usr/lib/shim/shimaa64.efi.signed
+  case $architecture in
+    amd64)
+      dpkg -l | grep grub-efi-amd64-signed >/dev/null
+      dpkg -l | grep grub-efi-amd64-bin >/dev/null
+      dpkg -l | grep grub-efi-ia32-bin >/dev/null
+      dpkg -l | grep shim-signed >/dev/null
+      ## package: grub-efi-amd64-signed
+      test -f /usr/lib/grub/x86_64-efi-signed/gcdx64.efi.signed
+      ## package: shim-signed amd64
+      test -f /usr/lib/shim/shimx64.efi.signed
+      ;;
+    i386)
+      #dpkg -l | grep grub-efi-amd64-signed >/dev/null
+      dpkg -l | grep grub-efi-amd64-bin >/dev/null
+      dpkg -l | grep grub-efi-ia32-bin >/dev/null
+      dpkg -l | grep shim-signed >/dev/null
+      ## package: grub-efi-ia32-signed
+      test -f /usr/lib/grub/i386-efi-signed/gcdia32.efi.signed
+      ## package: shim-signed i386
+      test -f /usr/lib/shim/shimia32.efi.signed
+      ;;
+    arm64)
+      dpkg -l | grep shim-signed >/dev/null
+      ## package: shim-signed arm64
+      test -f /usr/lib/shim/shimaa64.efi.signed
+      ;;
+    *)
+      true "INFO: Host dependency checking not implemented for the $architecture architecture."
+      ;;
+  esac
 }
 
 setup_directories() {
@@ -234,11 +230,25 @@ copy_kernel_and_initial_ramdisk_and_grub_config() {
   ## until noticed. Therefore adding a sanity test here.
   test -f "${ISO_TMP_DIR}/LiveOS/squashfs.img"
 
-  if [ "$check_bootloader_files" = "yes" ]; then
-    ## Needed by binary_grub-efi_wrapper
-    test -f "${RAW_IMAGE_MNT}/usr/lib/grub/x86_64-efi-signed/gcdx64.efi.signed"
-    test -f "${RAW_IMAGE_MNT}/usr/lib/shim/shimx64.efi.signed"
-  fi
+  architecture=$(dpkg --print-architecture)
+
+  ## Needed by binary_grub-efi_wrapper
+  case $architecture in
+    amd64)
+      test -f "${RAW_IMAGE_MNT}/usr/lib/grub/x86_64-efi-signed/gcdx64.efi.signed"
+      test -f "${RAW_IMAGE_MNT}/usr/lib/shim/shimx64.efi.signed"
+      ;;
+    i386)
+      test -f "${RAW_IMAGE_MNT}/usr/lib/grub/i386-efi-signed/gcdia32.efi.signed"
+      test -f "${RAW_IMAGE_MNT}/usr/lib/shim/shimia32.efi.signed"
+      ;;
+    arm64)
+      test -f "${RAW_IMAGE_MNT}/usr/lib/shim/shimaa64.efi.signed"
+      ;;
+    *)
+      true "INFO: raw image dependency checking not implemented for the $architecture architecture."
+      ;;
+  esac
 
   ## grub + shim
   ## shim: bootx64.efi
