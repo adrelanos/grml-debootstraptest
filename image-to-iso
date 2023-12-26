@@ -119,7 +119,6 @@ check_dependencies() {
   dpkg -l | grep grub-efi-ia32-bin >/dev/null
   dpkg -l | grep shim-signed >/dev/null
 
-  ## Not needed on host. Only needed inside image.
   ## grub-efi-amd64-signed
   test -f /usr/lib/grub/x86_64-efi-signed/gcdx64.efi.signed
 
