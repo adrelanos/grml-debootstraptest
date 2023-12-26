@@ -456,7 +456,6 @@ cleanup_temporary_files() {
 main() {
   parse_arguments "$@"
   check_root
-  architecture_detection
   check_dependencies
   setup_directories
   setup_image_mount
