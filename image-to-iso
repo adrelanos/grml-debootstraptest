@@ -68,6 +68,22 @@ check_root() {
   fi
 }
 
+architecture_detection() {
+  architecture=$(dpkg --print-architecture)
+
+  case $architecture in
+    amd64)
+      check_bootloader_files="yes"
+      ;;
+    i386)
+      check_bootloader_files="yes"
+      ;;
+    *)
+      check_bootloader_files="no"
+      ;;
+  esac
+}
+
 check_dependencies() {
   true "INFO: Ensure necessary commands are available..."
 
@@ -85,27 +101,36 @@ check_dependencies() {
 
   ## Used by live-build.
   ## Unnecessary dependency.
+  ## Avoided in forked live-build scripts.
   #dpkg -l | grep isolinux >/dev/null
 
-  # Undocumented dependencies by grub-mkrescue.
-  #dpkg -l | grep grub-efi-amd64-bin >/dev/null
-  #dpkg -l | grep grub-efi-amd64-signed >/dev/null
-
-  # Undocumented dependencies by grub-mkrescue.
+  ## Undocumented dependencies by grub-mkrescue.
+  ## Also needed by the live-build scripts.
   dpkg -l | grep mtools >/dev/null
+
+  if [ "$check_bootloader_files" = "no" ]; then
+    return 0
+  fi
+
+  ## Undocumented dependencies by grub-mkrescue.
+  ## Also needed by the live-build scripts.
+  dpkg -l | grep grub-efi-amd64-bin >/dev/null
+  dpkg -l | grep grub-efi-amd64-signed >/dev/null
+  dpkg -l | grep grub-efi-ia32-bin >/dev/null
+  dpkg -l | grep shim-signed >/dev/null
 
   ## Not needed on host. Only needed inside image.
   ## grub-efi-amd64-signed
-  #test -f /usr/lib/grub/x86_64-efi-signed/gcdx64.efi.signed
+  test -f /usr/lib/grub/x86_64-efi-signed/gcdx64.efi.signed
   ## shim-signed
-  #test -f /usr/lib/shim/shimx64.efi.signed
+  test -f /usr/lib/shim/shimx64.efi.signed
 
   ## grub-efi-ia32-signed
-  #test -f /usr/lib/grub/i386-efi-signed/gcdia32.efi.signed
+  test -f /usr/lib/grub/i386-efi-signed/gcdia32.efi.signed
   ## shim-signed i386
-  #test -f /usr/lib/shim/shimia32.efi.signed
+  test -f /usr/lib/shim/shimia32.efi.signed
   ## shim-signed arm64
-  #test -f /usr/lib/shim/shimaa64.efi.signed
+  test -f /usr/lib/shim/shimaa64.efi.signed
 }
 
 setup_directories() {
@@ -208,20 +233,6 @@ copy_kernel_and_initial_ramdisk_and_grub_config() {
   ## but dracut obviously fail to find the root filesystem. This this can be confusing nonetheless
   ## until noticed. Therefore adding a sanity test here.
   test -f "${ISO_TMP_DIR}/LiveOS/squashfs.img"
-
-  architecture=$(dpkg --print-architecture)
-
-  case $architecture in
-    amd64)
-      check_bootloader_files="yes"
-      ;;
-    i386)
-      check_bootloader_files="yes"
-      ;;
-    *)
-      check_bootloader_files="no"
-      ;;
-  esac
 
   if [ "$check_bootloader_files" = "yes" ]; then
     ## Needed by binary_grub-efi_wrapper
@@ -435,6 +446,7 @@ cleanup_temporary_files() {
 main() {
   parse_arguments "$@"
   check_root
+  architecture_detection
   check_dependencies
   setup_directories
   setup_image_mount
