@@ -48,6 +48,17 @@ error_handler() {
 }
 
 parse_arguments() {
+  if [ $# -lt 1 ]; then
+    echo "Usage: $0 <raw_image_file> <iso_tmp_dir> <iso_image_file>" >&2
+    exit 1
+  fi
+
+  if [ "$1" = "check_dependencies" ]; then
+    trap "exit 1" err
+    check_dependencies
+    exit 0
+  fi
+
   if [ $# -lt 3 ]; then
     echo "Usage: $0 <raw_image_file> <iso_tmp_dir> <iso_image_file>" >&2
     exit 1
