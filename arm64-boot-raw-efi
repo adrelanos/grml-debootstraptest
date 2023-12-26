@@ -19,4 +19,5 @@ qemu-system-aarch64 \
     -cpu cortex-a57 \
     -m 1024 \
     -bios /usr/share/qemu-efi-aarch64/QEMU_EFI.fd \
+    -device virtio-rng-pci \
     -drive format=raw,file=/home/user/grml-debootstraptestbin/test.img

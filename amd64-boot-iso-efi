@@ -34,6 +34,7 @@ qemu-system-x86_64 \
   -drive if=pflash,format=raw,unit=0,file="${OVMF_CODE}",readonly=on \
   -drive if=pflash,format=raw,unit=1,file="${OVMF_VARS}" \
   -net none \
+  -device virtio-rng-pci \
   -boot d \
   -cdrom ~/grml-debootstraptestbin/output.iso
   "$@"

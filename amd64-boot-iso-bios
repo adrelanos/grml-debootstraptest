@@ -10,5 +10,6 @@ set -e
 qemu-system-x86_64 \
     -nographic \
     -m 1024 \
+    -device virtio-rng-pci \
     -boot d \
     -cdrom ~/grml-debootstraptestbin/output.iso

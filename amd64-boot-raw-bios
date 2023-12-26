@@ -21,4 +21,5 @@ sudo apt-get install qemu-utils
 qemu-system-x86_64 \
     -nographic \
     -m 1024 \
+    -device virtio-rng-pci \
     -drive format=raw,file=/home/user/grml-debootstraptestbin/test.img
