@@ -30,8 +30,11 @@ def process_grub_line(input_line, extra_params, in_custom_section):
             post_command_whitespace = parts[1][:len(parts[1]) - len(parts[1].lstrip())]
 
             remaining_parts = parts[1].lstrip().split()
+
             excluded_startswith = ['root=UUID']
-            excluded_exact = ['ro', 'quiet', 'rhgb']
+            ## Was functional:
+            #excluded_exact = ['ro', 'quiet', 'rhgb']
+            excluded_exact = ['ro']
 
             filtered_parts = []
             removed_parts = []
