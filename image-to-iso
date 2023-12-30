@@ -379,12 +379,12 @@ grub_raw_image_config_to_grub_iso_image_config() {
   iso_grub_extra_params+=" rd.live.overlay.overlayfs=1"
 
   # Debugging dracut.
-  iso_grub_extra_params+=" rd.debug"
-  iso_grub_extra_params+=" rd.live.debug"
+  #iso_grub_extra_params+=" rd.debug"
+  #iso_grub_extra_params+=" rd.live.debug"
 
   # console=ttyS0: Show output when booting with qemu with -nographic.
   # console=tty0: Keep normal console output enabled.
-  iso_grub_extra_params+=" console=tty0 console=ttyS0,115200n8"
+  #iso_grub_extra_params+=" console=tty0 console=ttyS0,115200n8"
 
   # Convert grub.cfg from raw image to grub.cfg usable for ISO image.
   #
