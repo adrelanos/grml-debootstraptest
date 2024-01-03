@@ -399,7 +399,7 @@ grub_raw_image_config_to_grub_iso_image_config() {
   ## This might cause issues because wrong UUID.
 }
 
-create_iso() {
+create_iso_file() {
   true "INFO: Create the ISO using grub-mkrescue based on the temporary ISO directory..."
 
   ## Was functional,
@@ -478,7 +478,7 @@ main() {
   copy_kernel_and_initial_ramdisk_and_grub_config
   unmount_cleanup
   grub_raw_image_config_to_grub_iso_image_config
-  create_iso
+  create_iso_file
   cleanup_temporary_files
   true "INFO: Done."
 }
