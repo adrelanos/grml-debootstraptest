@@ -371,8 +371,8 @@ grub_raw_image_config_to_grub_iso_image_config() {
 
   ## Define root device.
   ## Needs to be same used below with grub-mkrescue '-V cdlabel', otherwise the
-  ## ISO would be unbootable with dracut. (initramfs-tools is able to boot such
-  ## an ISO.)
+  ## ISO would be unbootable with dracut.
+  ## (initramfs-tools is able to boot such an ISO.)
   iso_grub_extra_params+=" root=live:CDLABEL=cdlabel"
 
   iso_grub_extra_params+=" rd.live.image"
