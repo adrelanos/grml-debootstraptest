@@ -325,7 +325,7 @@ unmount_cleanup() {
   #~/derivative-maker/help-steps/unmount-helper -- /tmp/user/0/tmp.6UT5XIy8K9
 
   # XXX: hardcoded path
-  if test -x /home/$SUDO_USER/derivative-maker/help-steps/unmount-helper ; then
+  if test -x "/home/$SUDO_USER/derivative-maker/help-steps/unmount-helper" ; then
     # XXX: Hacky. Would be better if this was a standalone script.
     umount_tool="sudo -u $SUDO_USER /home/$SUDO_USER/derivative-maker/help-steps/unmount-helper --"
   else
