@@ -310,6 +310,14 @@ copy_kernel_and_initial_ramdisk_and_grub_config() {
   #cp -a chroot/usr/lib/shim/shimia32.efi.signed chroot/grub-efi-temp/EFI/boot/bootia32.efi
 }
 
+handle_fstab() {
+  if test -f "${RAW_IMAGE_MNT}/etc/fstab" ; then
+    if ! test -f "${RAW_IMAGE_MNT}/etc/fstab_old_image-to-iso" ; then
+      mv --verbose "${RAW_IMAGE_MNT}/etc/fstab" "${RAW_IMAGE_MNT}/etc/fstab_old_image-to-iso"
+    fi
+  fi
+}
+
 unmount_cleanup() {
   true "INFO: Unmount partitions and clean up loopback device..."
 
@@ -476,6 +484,7 @@ main() {
   get_file_names
   create_squashfs
   copy_kernel_and_initial_ramdisk_and_grub_config
+  handle_fstab
   unmount_cleanup
   grub_raw_image_config_to_grub_iso_image_config
   create_iso_file
