@@ -448,14 +448,11 @@ create_iso_file() {
   # xorriso -as mkisofs -R -r -J -joliet-long -l -cache-inodes -iso-level 3 --grub2-boot-info --grub2-mbr /usr/lib/grub/i386-pc/boot_hybrid.img -efi-boot-part --efi-boot-image -A "Debian Live" -p "live-build 20230502; https://salsa.debian.org/live-team/live-build" -publisher "Debian Live project; https://wiki.debian.org/DebianLive; debian-live@lists.debian.org" -V "Debian bookworm 20240423-10:45" --modification-date=2024042314455200 -no-emul-boot -boot-load-size 4 -boot-info-table -b boot/grub/grub_eltorito -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot -isohybrid-gpt-basdat -isohybrid-apm-hfsplus -o live-image-amd64.hybrid.iso binary
 
   ## Options not used yet but that might make sense to be more similar to Debian:
-  ## TODO: now using?
-  ## -A application_id
+  ##
   ## Only useful for ISOLINUX, hence not using:
   ## -c boot_catalog
-  ## ###
 
-  ## TODO: update after next run
-  ## xorriso -as mkisofs -R -r -J -joliet-long -l -cache-inodes -iso-level 3 -v -p "preparer" -publisher "publisher" -V "cdlabel" --modification-date=2024040708211500 -no-emul-boot -boot-load-size 4 -boot-info-table -b boot/grub/grub_eltorito -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot -isohybrid-gpt-basdat -isohybrid-apm-hfsplus -o /home/user/derivative-binary/17.1.3.3/Kicksecure-Xfce-17.1.3.3.iso /home/user/derivative-binary/Kicksecure-Xfce_iso-tmp
+  ## xorriso -as mkisofs -R -r -J -joliet-long -l -cache-inodes -iso-level 3 --grub2-boot-info --grub2-mbr /usr/lib/grub/i386-pc/boot_hybrid.img -efi-boot-part --efi-boot-image -v -A "application_id" -p "preparer" -publisher "publisher" -V "cdlabel" --modification-date=2024042316311900 -no-emul-boot -boot-load-size 4 -boot-info-table -b boot/grub/grub_eltorito -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot -isohybrid-gpt-basdat -isohybrid-apm-hfsplus -o /home/user/derivative-binary/17.1.3.8/Kicksecure-Xfce-17.1.3.8.iso /home/user/derivative-binary/Kicksecure-Xfce_iso-tmp
   ##
   ## Also creates file:
   ## /.disk/mkisofs
