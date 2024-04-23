@@ -308,6 +308,17 @@ copy_kernel_and_initial_ramdisk_and_grub_config() {
   #
   #cp -a chroot/usr/lib/grub/i386-efi-signed/gcdia32.efi.signed chroot/grub-efi-temp/EFI/boot/grubia32.efi
   #cp -a chroot/usr/lib/shim/shimia32.efi.signed chroot/grub-efi-temp/EFI/boot/bootia32.efi
+
+  ## On a Debian ISO file '.disk/info' is created using:
+  #echo "${TITLE} ${VERSION} \"${DISTRIBUTION}\" - ${STRING} ${DISK_LABEL} Binary ${_DATE}" > binary/.disk/info
+  ## Example content:
+  #Official Debian GNU/Linux Live 12.4.0 xfce 2023-12-10T17:43:24Z
+  ## Existence of that file is important because grub config created by binary_grub-efi contains:
+  #search --set=root --file /.disk/info
+  ## The actual content seems not crucially important.
+  mkdir --parents "${ISO_TMP_DIR}/.disk"
+  echo "created by $0" | tee "${ISO_TMP_DIR}/.disk/info" >/dev/null
+  test -f "${ISO_TMP_DIR}/.disk/info"
 }
 
 handle_fstab() {
