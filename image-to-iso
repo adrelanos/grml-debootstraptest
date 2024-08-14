@@ -221,6 +221,7 @@ get_file_names() {
 
 create_squashfs() {
   true "INFO: Creating squashfs..."
+  test -r ./squashfs-exclude.txt
   ## Take the contents of the VM image and create the squashfs.img file in the LiveOS folder
   ## within the temporary ISO directory.
   ##
@@ -233,7 +234,7 @@ create_squashfs() {
   ## unnecessary to repeatedly recreate the squashfs file.
   ##
   ## TODO: Consider porting to squashfs-tools-ng for potential improvements in speed and size reduction.
-  mksquashfs "${RAW_IMAGE_MNT}" "${ISO_TMP_DIR}/LiveOS/squashfs.img" -noappend
+  mksquashfs "${RAW_IMAGE_MNT}" "${ISO_TMP_DIR}/LiveOS/squashfs.img" -noappend -ef ./squashfs-exclude.txt
 }
 
 copy_kernel_and_initial_ramdisk_and_grub_config() {
