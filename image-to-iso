@@ -197,7 +197,11 @@ prepare_loopback_info() {
 mount_file_systems() {
   true "INFO: Mount the target file system and EFI partition..."
   mount "${ROOTFS_TARGET}" "${RAW_IMAGE_MNT}"
-  mount "${EFI_TARGET}" "${RAW_IMAGE_MNT}/boot/efi"
+
+  ## No longer add /boot/efi folder to squashfs.
+  ## The grub.cfg can confuse after installing using Calamares.
+  ## If re-enabling this, also re-enable umount below.
+  #mount "${EFI_TARGET}" "${RAW_IMAGE_MNT}/boot/efi"
 }
 
 create_iso_directories() {
@@ -344,9 +348,9 @@ unmount_cleanup() {
   fi
 
   if [ -n "${RAW_IMAGE_MNT:-}" ]; then
-    if findmnt "${RAW_IMAGE_MNT}/boot/efi" &>/dev/null; then
-      $umount_tool "${RAW_IMAGE_MNT}/boot/efi"
-    fi
+    #if findmnt "${RAW_IMAGE_MNT}/boot/efi" &>/dev/null; then
+      #$umount_tool "${RAW_IMAGE_MNT}/boot/efi"
+    #fi
     if findmnt "${RAW_IMAGE_MNT}" &>/dev/null; then
       $umount_tool "${RAW_IMAGE_MNT}"
     fi
