@@ -54,7 +54,7 @@ Check_package ${ISO_TMP_DIR} /usr/bin/xorriso xorriso
 if [ "${LB_BOOTLOADER_BIOS}" = "grub-pc" ]
 then
 	Check_package ${ISO_TMP_DIR} /usr/lib/grub/i386-pc/boot_hybrid.img grub-pc-bin
-fi 
+fi
 
 # Restoring cache
 Restore_package_cache binary
@@ -79,7 +79,7 @@ then
 	XORRISO_OPTIONS="${XORRISO_OPTIONS} -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin -partition_offset 16"
 	elif [ "${LB_BOOTLOADER_BIOS}" = "grub-pc" ]
 	then
-		XORRISO_OPTIONS="${XORRISO_OPTIONS} --grub2-boot-info --grub2-mbr /usr/lib/grub/i386-pc/boot_hybrid.img" 
+		XORRISO_OPTIONS="${XORRISO_OPTIONS} --grub2-boot-info --grub2-mbr /usr/lib/grub/i386-pc/boot_hybrid.img"
 		XORRISO_OPTIONS="${XORRISO_OPTIONS} -efi-boot-part --efi-boot-image"
 	else
 		Echo_error "iso-hybrid images not supported with ${LB_BOOTLOADER_BIOS} as BIOS bootloader"
