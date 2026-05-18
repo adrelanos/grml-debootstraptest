@@ -1,0 +1,7 @@
+#!/bin/bash
+
+## Copyright (C) 2026 - 2026 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+## This repo has no debian/control by design.
+make_use_git_describe_for_version=true
